@@ -16,6 +16,10 @@
 		A1000014 /* UserSettings+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000013 /* UserSettings+CoreDataClass.swift */; };
 		A1000018 /* FocusSession+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000017 /* FocusSession+CoreDataProperties.swift */; };
 		A1000020 /* UserSettings+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000019 /* UserSettings+CoreDataProperties.swift */; };
+		A2110CBE2E3025E70066190A /* FocusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CBB2E3025E70066190A /* FocusManager.swift */; };
+		A2110CBF2E3025E70066190A /* UsageMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CBC2E3025E70066190A /* UsageMonitor.swift */; };
+		A2110CC32E3025E90066190A /* UsageMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CC12E3025E90066190A /* UsageMonitor.swift */; };
+		A2110CC42E3025E90066190A /* FocusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CC02E3025E90066190A /* FocusManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +33,10 @@
 		A1000013 /* UserSettings+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserSettings+CoreDataClass.swift"; sourceTree = "<group>"; };
 		A1000017 /* FocusSession+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FocusSession+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		A1000019 /* UserSettings+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserSettings+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A2110CBB2E3025E70066190A /* FocusManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusManager.swift; sourceTree = "<group>"; };
+		A2110CBC2E3025E70066190A /* UsageMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageMonitor.swift; sourceTree = "<group>"; };
+		A2110CC02E3025E90066190A /* FocusManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusManager.swift; sourceTree = "<group>"; };
+		A2110CC12E3025E90066190A /* UsageMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageMonitor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,14 +88,34 @@
 		A1000016 /* FocusTracker */ = {
 			isa = PBXGroup;
 			children = (
+				A2110CC22E3025E90066190A /* Services */,
 				A1000000 /* FocusTrackerApp.swift */,
 				A1000002 /* ContentView.swift */,
 				A100000E /* FocusDataModel.xcdatamodeld */,
 				A1000015 /* Models */,
 				A1000004 /* Assets.xcassets */,
 				A1000006 /* Preview Content */,
+				A2110CBD2E3025E70066190A /* Services */,
 			);
 			path = FocusTracker;
+			sourceTree = "<group>";
+		};
+		A2110CBD2E3025E70066190A /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A2110CBB2E3025E70066190A /* FocusManager.swift */,
+				A2110CBC2E3025E70066190A /* UsageMonitor.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		A2110CC22E3025E90066190A /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A2110CC02E3025E90066190A /* FocusManager.swift */,
+				A2110CC12E3025E90066190A /* UsageMonitor.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -162,6 +190,10 @@
 			files = (
 				A1000010 /* FocusDataModel.xcdatamodeld in Sources */,
 				A1000012 /* FocusSession+CoreDataClass.swift in Sources */,
+				A2110CC32E3025E90066190A /* UsageMonitor.swift in Sources */,
+				A2110CC42E3025E90066190A /* FocusManager.swift in Sources */,
+				A2110CBE2E3025E70066190A /* FocusManager.swift in Sources */,
+				A2110CBF2E3025E70066190A /* UsageMonitor.swift in Sources */,
 				A1000018 /* FocusSession+CoreDataProperties.swift in Sources */,
 				A1000014 /* UserSettings+CoreDataClass.swift in Sources */,
 				A1000020 /* UserSettings+CoreDataProperties.swift in Sources */,

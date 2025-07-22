@@ -41,3 +41,4 @@ xcodebuild -project FocusTracker.xcodeproj clean
 - Follow Swift naming conventions (camelCase)
 - Use `@FetchRequest` for Core Data queries in SwiftUI
 - Separate Core Data class extensions into +CoreDataClass and +CoreDataProperties files
+- 需要添加文件到工程时请求人工操作
