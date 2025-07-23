@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -16,11 +16,35 @@
 		A1000014 /* UserSettings+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000013 /* UserSettings+CoreDataClass.swift */; };
 		A1000018 /* FocusSession+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000017 /* FocusSession+CoreDataProperties.swift */; };
 		A1000020 /* UserSettings+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000019 /* UserSettings+CoreDataProperties.swift */; };
-		A2110CBE2E3025E70066190A /* FocusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CBB2E3025E70066190A /* FocusManager.swift */; };
-		A2110CBF2E3025E70066190A /* UsageMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CBC2E3025E70066190A /* UsageMonitor.swift */; };
 		A2110CC32E3025E90066190A /* UsageMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CC12E3025E90066190A /* UsageMonitor.swift */; };
 		A2110CC42E3025E90066190A /* FocusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CC02E3025E90066190A /* FocusManager.swift */; };
+		A2110CC82E302FA40066190A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CC62E302FA40066190A /* SettingsView.swift */; };
+		A2110CC92E302FA40066190A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CC52E302FA40066190A /* HomeView.swift */; };
+		A2110CF02E309F020066190A /* FocusDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A2110CEE2E309F020066190A /* FocusDataModel.xcdatamodeld */; };
+		A2110CF12E309F020066190A /* BackgroundDetectionImplementation.md in Resources */ = {isa = PBXBuildFile; fileRef = A2110CEC2E309F020066190A /* BackgroundDetectionImplementation.md */; };
+		A2110CF62E30E7EF0066190A /* BackgroundTaskImplementationSummary 2.md in Resources */ = {isa = PBXBuildFile; fileRef = A2110CF42E30E7EF0066190A /* BackgroundTaskImplementationSummary 2.md */; };
+		A2110CF72E30E7EF0066190A /* CoreDataMigrationGuide 2.md in Resources */ = {isa = PBXBuildFile; fileRef = A2110CF52E30E7EF0066190A /* CoreDataMigrationGuide 2.md */; };
+		A2110CFC2E30E8210066190A /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CF92E30E8210066190A /* StatisticsView.swift */; };
+		A2110CFD2E30E8210066190A /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CFA2E30E8210066190A /* TestView.swift */; };
+		A2110D1C2E30ED740066190A /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D1B2E30ED740066190A /* PersistenceController.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A2110CD42E3036D60066190A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A0FFFFF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A0FFFFFD;
+			remoteInfo = FocusTracker;
+		};
+		A2110D142E30EAFE0066190A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A0FFFFF9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A0FFFFFD;
+			remoteInfo = FocusTracker;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		A0FFFFFE /* FocusTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FocusTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -33,14 +57,43 @@
 		A1000013 /* UserSettings+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserSettings+CoreDataClass.swift"; sourceTree = "<group>"; };
 		A1000017 /* FocusSession+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FocusSession+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		A1000019 /* UserSettings+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserSettings+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		A2110CBB2E3025E70066190A /* FocusManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusManager.swift; sourceTree = "<group>"; };
-		A2110CBC2E3025E70066190A /* UsageMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageMonitor.swift; sourceTree = "<group>"; };
 		A2110CC02E3025E90066190A /* FocusManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusManager.swift; sourceTree = "<group>"; };
 		A2110CC12E3025E90066190A /* UsageMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageMonitor.swift; sourceTree = "<group>"; };
+		A2110CC52E302FA40066190A /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		A2110CC62E302FA40066190A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		A2110CCE2E3036D60066190A /* FocusTrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FocusTrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2110CEB2E3090F40066190A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A2110CEC2E309F020066190A /* BackgroundDetectionImplementation.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = BackgroundDetectionImplementation.md; sourceTree = "<group>"; };
+		A2110CEF2E309F020066190A /* FocusDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FocusDataModel.xcdatamodel; sourceTree = "<group>"; };
+		A2110CF42E30E7EF0066190A /* BackgroundTaskImplementationSummary 2.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "BackgroundTaskImplementationSummary 2.md"; sourceTree = "<group>"; };
+		A2110CF52E30E7EF0066190A /* CoreDataMigrationGuide 2.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "CoreDataMigrationGuide 2.md"; sourceTree = "<group>"; };
+		A2110CF92E30E8210066190A /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
+		A2110CFA2E30E8210066190A /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
+		A2110D0E2E30EAFE0066190A /* FocusTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FocusTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2110D1B2E30ED740066190A /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		A2110CCF2E3036D60066190A /* FocusTrackerTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = FocusTrackerTests; sourceTree = "<group>"; };
+		A2110D0F2E30EAFE0066190A /* FocusTrackerUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = FocusTrackerUITests; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		A0FFFFFC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A2110CCB2E3036D60066190A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A2110D0B2E30EAFE0066190A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -54,6 +107,8 @@
 			isa = PBXGroup;
 			children = (
 				A1000016 /* FocusTracker */,
+				A2110CCF2E3036D60066190A /* FocusTrackerTests */,
+				A2110D0F2E30EAFE0066190A /* FocusTrackerUITests */,
 				A0FFFFFF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -62,6 +117,8 @@
 			isa = PBXGroup;
 			children = (
 				A0FFFFFE /* FocusTracker.app */,
+				A2110CCE2E3036D60066190A /* FocusTrackerTests.xctest */,
+				A2110D0E2E30EAFE0066190A /* FocusTrackerUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -88,6 +145,10 @@
 		A1000016 /* FocusTracker */ = {
 			isa = PBXGroup;
 			children = (
+				A2110CED2E309F020066190A /* Documentation */,
+				A2110CEE2E309F020066190A /* FocusDataModel.xcdatamodeld */,
+				A2110CEB2E3090F40066190A /* Info.plist */,
+				A2110CC72E302FA40066190A /* Views */,
 				A2110CC22E3025E90066190A /* Services */,
 				A1000000 /* FocusTrackerApp.swift */,
 				A1000002 /* ContentView.swift */,
@@ -95,27 +156,39 @@
 				A1000015 /* Models */,
 				A1000004 /* Assets.xcassets */,
 				A1000006 /* Preview Content */,
-				A2110CBD2E3025E70066190A /* Services */,
 			);
 			path = FocusTracker;
-			sourceTree = "<group>";
-		};
-		A2110CBD2E3025E70066190A /* Services */ = {
-			isa = PBXGroup;
-			children = (
-				A2110CBB2E3025E70066190A /* FocusManager.swift */,
-				A2110CBC2E3025E70066190A /* UsageMonitor.swift */,
-			);
-			path = Services;
 			sourceTree = "<group>";
 		};
 		A2110CC22E3025E90066190A /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				A2110D1B2E30ED740066190A /* PersistenceController.swift */,
 				A2110CC02E3025E90066190A /* FocusManager.swift */,
 				A2110CC12E3025E90066190A /* UsageMonitor.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		A2110CC72E302FA40066190A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A2110CF92E30E8210066190A /* StatisticsView.swift */,
+				A2110CFA2E30E8210066190A /* TestView.swift */,
+				A2110CC52E302FA40066190A /* HomeView.swift */,
+				A2110CC62E302FA40066190A /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A2110CED2E309F020066190A /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+				A2110CEC2E309F020066190A /* BackgroundDetectionImplementation.md */,
+				A2110CF52E30E7EF0066190A /* CoreDataMigrationGuide 2.md */,
+				A2110CF42E30E7EF0066190A /* BackgroundTaskImplementationSummary 2.md */,
+			);
+			path = Documentation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -138,6 +211,52 @@
 			productReference = A0FFFFFE /* FocusTracker.app */;
 			productType = "com.apple.product-type.application";
 		};
+		A2110CCD2E3036D60066190A /* FocusTrackerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A2110CD82E3036D60066190A /* Build configuration list for PBXNativeTarget "FocusTrackerTests" */;
+			buildPhases = (
+				A2110CCA2E3036D60066190A /* Sources */,
+				A2110CCB2E3036D60066190A /* Frameworks */,
+				A2110CCC2E3036D60066190A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A2110CD52E3036D60066190A /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A2110CCF2E3036D60066190A /* FocusTrackerTests */,
+			);
+			name = FocusTrackerTests;
+			packageProductDependencies = (
+			);
+			productName = FocusTrackerTests;
+			productReference = A2110CCE2E3036D60066190A /* FocusTrackerTests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		A2110D0D2E30EAFE0066190A /* FocusTrackerUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A2110D162E30EAFE0066190A /* Build configuration list for PBXNativeTarget "FocusTrackerUITests" */;
+			buildPhases = (
+				A2110D0A2E30EAFE0066190A /* Sources */,
+				A2110D0B2E30EAFE0066190A /* Frameworks */,
+				A2110D0C2E30EAFE0066190A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A2110D152E30EAFE0066190A /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A2110D0F2E30EAFE0066190A /* FocusTrackerUITests */,
+			);
+			name = FocusTrackerUITests;
+			packageProductDependencies = (
+			);
+			productName = FocusTrackerUITests;
+			productReference = A2110D0E2E30EAFE0066190A /* FocusTrackerUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -145,11 +264,19 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1500;
+				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					A0FFFFFD = {
 						CreatedOnToolsVersion = 15.0;
+					};
+					A2110CCD2E3036D60066190A = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = A0FFFFFD;
+					};
+					A2110D0D2E30EAFE0066190A = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = A0FFFFFD;
 					};
 				};
 			};
@@ -167,6 +294,8 @@
 			projectRoot = "";
 			targets = (
 				A0FFFFFD /* FocusTracker */,
+				A2110CCD2E3036D60066190A /* FocusTrackerTests */,
+				A2110D0D2E30EAFE0066190A /* FocusTrackerUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -177,7 +306,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1000008 /* Preview Assets.xcassets in Resources */,
+				A2110CF12E309F020066190A /* BackgroundDetectionImplementation.md in Resources */,
 				A1000005 /* Assets.xcassets in Resources */,
+				A2110CF62E30E7EF0066190A /* BackgroundTaskImplementationSummary 2.md in Resources */,
+				A2110CF72E30E7EF0066190A /* CoreDataMigrationGuide 2.md in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A2110CCC2E3036D60066190A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A2110D0C2E30EAFE0066190A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -190,19 +336,50 @@
 			files = (
 				A1000010 /* FocusDataModel.xcdatamodeld in Sources */,
 				A1000012 /* FocusSession+CoreDataClass.swift in Sources */,
+				A2110CFC2E30E8210066190A /* StatisticsView.swift in Sources */,
+				A2110CFD2E30E8210066190A /* TestView.swift in Sources */,
 				A2110CC32E3025E90066190A /* UsageMonitor.swift in Sources */,
 				A2110CC42E3025E90066190A /* FocusManager.swift in Sources */,
-				A2110CBE2E3025E70066190A /* FocusManager.swift in Sources */,
-				A2110CBF2E3025E70066190A /* UsageMonitor.swift in Sources */,
 				A1000018 /* FocusSession+CoreDataProperties.swift in Sources */,
 				A1000014 /* UserSettings+CoreDataClass.swift in Sources */,
+				A2110CF02E309F020066190A /* FocusDataModel.xcdatamodeld in Sources */,
+				A2110D1C2E30ED740066190A /* PersistenceController.swift in Sources */,
 				A1000020 /* UserSettings+CoreDataProperties.swift in Sources */,
 				A1000003 /* ContentView.swift in Sources */,
+				A2110CC82E302FA40066190A /* SettingsView.swift in Sources */,
+				A2110CC92E302FA40066190A /* HomeView.swift in Sources */,
 				A1000001 /* FocusTrackerApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A2110CCA2E3036D60066190A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A2110D0A2E30EAFE0066190A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A2110CD52E3036D60066190A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A0FFFFFD /* FocusTracker */;
+			targetProxy = A2110CD42E3036D60066190A /* PBXContainerItemProxy */;
+		};
+		A2110D152E30EAFE0066190A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A0FFFFFD /* FocusTracker */;
+			targetProxy = A2110D142E30EAFE0066190A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		A1000009 /* Debug */ = {
@@ -335,6 +512,7 @@
 				DEVELOPMENT_TEAM = TB2LUZ268W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FocusTracker/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -364,6 +542,7 @@
 				DEVELOPMENT_TEAM = TB2LUZ268W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FocusTracker/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -379,6 +558,78 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A2110CD62E3036D60066190A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TB2LUZ268W;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kaikxiao.apps.FocusTrackerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = FocusTracker;
+			};
+			name = Debug;
+		};
+		A2110CD72E3036D60066190A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TB2LUZ268W;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kaikxiao.apps.FocusTrackerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = FocusTracker;
+			};
+			name = Release;
+		};
+		A2110D172E30EAFE0066190A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TB2LUZ268W;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kaikxiao.apps.FocusTrackerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = FocusTracker;
+			};
+			name = Debug;
+		};
+		A2110D182E30EAFE0066190A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TB2LUZ268W;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kaikxiao.apps.FocusTrackerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = FocusTracker;
 			};
 			name = Release;
 		};
@@ -403,6 +654,24 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		A2110CD82E3036D60066190A /* Build configuration list for PBXNativeTarget "FocusTrackerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A2110CD62E3036D60066190A /* Debug */,
+				A2110CD72E3036D60066190A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A2110D162E30EAFE0066190A /* Build configuration list for PBXNativeTarget "FocusTrackerUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A2110D172E30EAFE0066190A /* Debug */,
+				A2110D182E30EAFE0066190A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
@@ -412,6 +681,16 @@
 				A100000F /* FocusDataModel.xcdatamodel */,
 			);
 			currentVersion = A100000F /* FocusDataModel.xcdatamodel */;
+			path = FocusDataModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+		A2110CEE2E309F020066190A /* FocusDataModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				A2110CEF2E309F020066190A /* FocusDataModel.xcdatamodel */,
+			);
+			currentVersion = A2110CEF2E309F020066190A /* FocusDataModel.xcdatamodel */;
 			path = FocusDataModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

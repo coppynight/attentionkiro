@@ -9,11 +9,14 @@
     </entity>
     <entity name="UserSettings" representedClassName="UserSettings" syncable="YES" codeGenerationType="none">
         <attribute name="dailyFocusGoal" optional="NO" attributeType="Double" defaultValueString="7200" usesScalarValueType="YES"/>
+        <attribute name="flexibleSleepDays" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="lunchBreakEnabled" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="lunchBreakEnd" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="lunchBreakStart" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="notificationsEnabled" optional="NO" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="sleepEndTime" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="sleepStartTime" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="timeZoneOffset" optional="NO" attributeType="Double" defaultValueString="8" usesScalarValueType="YES"/>
+        <attribute name="useLocalTimeZone" optional="NO" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
     </entity>
 </model>

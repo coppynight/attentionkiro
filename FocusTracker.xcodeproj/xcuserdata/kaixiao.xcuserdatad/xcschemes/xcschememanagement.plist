@@ -7,7 +7,35 @@
 		<key>FocusTracker.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>FocusTrackerTests.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+		<key>FocusTrackerUITests.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>A0FFFFFD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A2110CCD2E3036D60066190A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A2110D0D2E30EAFE0066190A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

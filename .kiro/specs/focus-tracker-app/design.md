@@ -65,7 +65,8 @@ graph TB
 - **UI框架**：SwiftUI (iOS 15+, watchOS 8+)
 - **数据存储**：Core Data + CloudKit (可选同步)
 - **状态管理**：Combine + ObservableObject
-- **后台处理**：Background App Refresh + Background Tasks
+- **后台处理**：Background App Refresh + BGTaskScheduler
+- **后台任务**：BGProcessingTask + UIBackgroundTaskIdentifier
 - **通知**：User Notifications Framework
 - **小组件**：WidgetKit
 - **Watch通信**：Watch Connectivity Framework
@@ -139,16 +140,26 @@ class FocusManager: ObservableObject, FocusManagerProtocol {
 protocol UsageMonitorProtocol {
     func startMonitoring()
     func stopMonitoring()
-    var onUsageEvent: ((UsageEvent) -> Void)? { get set }
+    var onFocusSessionDetected: ((Date, Date) -> Void)? { get set }
 }
 
 class UsageMonitor: UsageMonitorProtocol {
-    private var screenTimeObserver: NSObjectProtocol?
-    private var appStateObserver: NSObjectProtocol?
+    @Published var isMonitoring = false
+    @Published var lastAppActiveTime: Date?
+    @Published var lastAppInactiveTime: Date?
+    
+    private var backgroundTaskID: UIBackgroundTaskIdentifier = .invalid
+    private let backgroundProcessingTaskID = "com.focustracker.app.processing"
     
     func detectFocusSession(from events: [UsageEvent]) -> FocusSession?
     func isWithinActiveHours(_ date: Date) -> Bool
     func shouldExcludeAsRestTime(_ session: FocusSession) -> Bool
+    
+    // 后台任务管理
+    private func startBackgroundTask()
+    private func endBackgroundTask()
+    private func scheduleBackgroundProcessing()
+    private func handleBackgroundProcessing(task: BGProcessingTask)
 }
 ```
 
@@ -201,6 +212,121 @@ struct FocusWidget: Widget {
     }
 }
 ```
+
+## 后台任务设计
+
+### 后台任务架构
+
+```mermaid
+sequenceDiagram
+    participant App as 前台应用
+    participant BG as 后台任务
+    participant System as iOS系统
+    participant BGScheduler as BGTaskScheduler
+    
+    App->>System: 应用进入后台
+    System->>BG: 启动UIBackgroundTask
+    BG->>BGScheduler: 调度BGProcessingTask
+    
+    Note over BG: 后台任务运行(最多30秒-10分钟)
+    
+    BG->>BG: 监测应用状态变化
+    BG->>System: 任务即将到期
+    System->>BG: 结束后台任务
+    
+    Note over BGScheduler: 系统调度后台处理(15分钟后)
+    
+    BGScheduler->>BG: 执行BGProcessingTask
+    BG->>BG: 检查长时间专注会话
+    BG->>BGScheduler: 调度下一次处理
+    BG->>System: 任务完成
+    
+    App->>System: 应用重新进入前台
+    System->>App: 检查后台期间的数据
+    App->>App: 处理检测到的专注会话
+```
+
+### 后台任务类型
+
+#### 1. 短期后台任务 (UIBackgroundTask)
+- **用途**：应用进入后台时维持监测功能
+- **时长**：30秒到10分钟（系统决定）
+- **功能**：
+  - 监听应用状态变化
+  - 记录应用进入后台的时间
+  - 调度长期后台处理任务
+
+#### 2. 后台处理任务 (BGProcessingTask)
+- **用途**：定期检查和处理专注数据
+- **调度**：每15分钟尝试执行一次
+- **功能**：
+  - 检查长时间的专注会话
+  - 清理过期的临时数据
+  - 预处理统计数据
+
+### 后台权限配置
+
+#### Info.plist 配置
+```xml
+<key>UIBackgroundModes</key>
+<array>
+    <string>processing</string>
+    <string>background-processing</string>
+</array>
+<key>BGTaskSchedulerPermittedIdentifiers</key>
+<array>
+    <string>com.focustracker.app.processing</string>
+</array>
+```
+
+#### 权限请求策略
+1. **首次启动**：引导用户开启后台应用刷新
+2. **设置页面**：提供快速跳转到系统设置的选项
+3. **权限检查**：定期检查权限状态并提醒用户
+
+### 后台数据处理
+
+#### 专注会话检测流程
+```swift
+// 后台检测逻辑
+func handleAppBecomeActive() {
+    let now = Date()
+    
+    if let inactiveTime = lastAppInactiveTime {
+        let inactiveDuration = now.timeIntervalSince(inactiveTime)
+        
+        if inactiveDuration >= minimumFocusTime {
+            // 检测到潜在专注会话
+            onFocusSessionDetected?(inactiveTime, now)
+        }
+    }
+    
+    lastAppActiveTime = now
+}
+```
+
+#### 重复会话防止
+```swift
+func isDuplicateSession(startTime: Date, endTime: Date) -> Bool {
+    // 检查是否已存在相似时间段的会话
+    let buffer: TimeInterval = 5 * 60 // 5分钟缓冲
+    let existingSessions = fetchSessions(around: startTime, buffer: buffer)
+    return !existingSessions.isEmpty
+}
+```
+
+### 后台任务限制和对策
+
+#### iOS系统限制
+- **时间限制**：后台任务有严格的时间限制
+- **频率限制**：系统根据用户使用习惯调整后台任务频率
+- **电池优化**：低电量模式会限制后台任务
+
+#### 应对策略
+- **优雅降级**：后台任务失败时不影响前台功能
+- **数据补偿**：前台启动时检查并补充缺失的数据
+- **用户教育**：说明后台权限的重要性
+- **智能调度**：根据用户使用模式优化后台任务调度
 
 ## 数据模型
 

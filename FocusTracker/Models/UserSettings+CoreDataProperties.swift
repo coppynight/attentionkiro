@@ -14,5 +14,8 @@ extension UserSettings {
     @NSManaged public var notificationsEnabled: Bool
     @NSManaged public var sleepEndTime: Date
     @NSManaged public var sleepStartTime: Date
+    @NSManaged public var useLocalTimeZone: Bool
+    @NSManaged public var timeZoneOffset: Double
+    @NSManaged public var flexibleSleepDays: Bool
 
 }

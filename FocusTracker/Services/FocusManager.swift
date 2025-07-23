@@ -131,6 +131,12 @@ class FocusManager: ObservableObject, FocusManagerProtocol {
     private func handleFocusSessionDetected(startTime: Date, endTime: Date) {
         let duration = endTime.timeIntervalSince(startTime)
         
+        // Check if we already have a session for this time period to avoid duplicates
+        if isDuplicateSession(startTime: startTime, endTime: endTime) {
+            print("FocusManager: Duplicate session detected, skipping")
+            return
+        }
+        
         // Create new focus session
         let focusSession = FocusSession(context: viewContext)
         focusSession.startTime = startTime
@@ -139,17 +145,46 @@ class FocusManager: ObservableObject, FocusManagerProtocol {
         focusSession.sessionType = "focus"
         focusSession.isValid = validateFocusSession(startTime: startTime, endTime: endTime, duration: duration)
         
-        // Save to Core Data
-        do {
-            try viewContext.save()
-            print("FocusManager: Saved focus session - Duration: \(Int(duration/60)) minutes, Valid: \(focusSession.isValid)")
-            
-            // Update today's focus time if session is valid
-            if focusSession.isValid {
-                calculateTodaysFocusTime()
+        // Save to Core Data with background context if needed
+        let contextToUse = Thread.isMainThread ? viewContext : viewContext
+        
+        contextToUse.perform {
+            do {
+                try contextToUse.save()
+                print("FocusManager: Saved focus session - Duration: \(Int(duration/60)) minutes, Valid: \(focusSession.isValid)")
+                
+                // Update today's focus time if session is valid
+                if focusSession.isValid {
+                    DispatchQueue.main.async {
+                        self.calculateTodaysFocusTime()
+                    }
+                }
+            } catch {
+                print("FocusManager: Error saving focus session - \(error)")
             }
+        }
+    }
+    
+    private func isDuplicateSession(startTime: Date, endTime: Date) -> Bool {
+        let request: NSFetchRequest<FocusSession> = FocusSession.fetchRequest()
+        
+        // Check for sessions that overlap with the new session
+        let startBuffer: TimeInterval = 5 * 60 // 5 minutes buffer
+        let endBuffer: TimeInterval = 5 * 60   // 5 minutes buffer
+        
+        let bufferedStartTime = startTime.addingTimeInterval(-startBuffer)
+        let bufferedEndTime = endTime.addingTimeInterval(endBuffer)
+        
+        request.predicate = NSPredicate(format: "startTime >= %@ AND endTime <= %@", 
+                                      bufferedStartTime as NSDate, bufferedEndTime as NSDate)
+        request.fetchLimit = 1
+        
+        do {
+            let existingSessions = try viewContext.fetch(request)
+            return !existingSessions.isEmpty
         } catch {
-            print("FocusManager: Error saving focus session - \(error)")
+            print("FocusManager: Error checking for duplicate sessions - \(error)")
+            return false
         }
     }
     
@@ -181,11 +216,15 @@ class FocusManager: ObservableObject, FocusManagerProtocol {
         }
         
         // Check if session spans across sleep time
-        let calendar = Calendar.current
         let sessionDuration = endTime.timeIntervalSince(startTime)
         
         // If session is longer than 8 hours, it likely spans sleep time
         if sessionDuration > 8 * 3600 {
+            return true
+        }
+        
+        // Check if session overlaps with lunch break
+        if userSettings.isWithinLunchBreak(startTime) || userSettings.isWithinLunchBreak(endTime) {
             return true
         }
         
