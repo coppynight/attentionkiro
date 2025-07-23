@@ -1,31 +1,46 @@
 import SwiftUI
 import CoreData
+import Combine
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var focusManager: FocusManager
+    @State private var selectedTab = 0
 
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             HomeView()
                 .tabItem {
                     Image(systemName: "house.fill")
                     Text("首页")
                 }
+                .tag(0)
             
             StatisticsView()
                 .tabItem {
                     Image(systemName: "chart.bar.fill")
                     Text("统计")
                 }
+                .tag(1)
             
             SettingsView()
                 .tabItem {
                     Image(systemName: "gearshape.fill")
                     Text("设置")
                 }
+                .tag(2)
+            
+            #if DEBUG
+            TestView()
+                .tabItem {
+                    Image(systemName: "hammer.fill")
+                    Text("测试")
+                }
+                .tag(3)
+            #endif
         }
         .accentColor(.blue)
+        // Navigation notifications temporarily disabled
     }
 
 }
@@ -38,5 +53,6 @@ struct ContentView_Previews: PreviewProvider {
                 usageMonitor: UsageMonitor(),
                 viewContext: PersistenceController.preview.container.viewContext
             ))
+            // .environmentObject(NotificationManager.shared)
     }
 }

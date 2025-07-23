@@ -1,6 +1,7 @@
 import Foundation
 import CoreData
 import Combine
+import UserNotifications
 
 /// Statistics for focus data
 struct FocusStatistics {
@@ -41,6 +42,7 @@ class FocusManager: ObservableObject, FocusManagerProtocol {
     private let usageMonitor: UsageMonitor
     private let viewContext: NSManagedObjectContext
     private var cancellables = Set<AnyCancellable>()
+    // private let notificationManager = NotificationManager.shared
     
     // MARK: - Initialization
     
@@ -157,6 +159,11 @@ class FocusManager: ObservableObject, FocusManagerProtocol {
                 if focusSession.isValid {
                     DispatchQueue.main.async {
                         self.calculateTodaysFocusTime()
+                        
+                        // Check for smart notifications
+                        // Task {
+                        //     await self.notificationManager.checkAndSendSmartNotifications(viewContext: self.viewContext)
+                        // }
                     }
                 }
             } catch {

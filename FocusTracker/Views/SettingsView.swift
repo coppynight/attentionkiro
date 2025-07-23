@@ -3,11 +3,13 @@ import CoreData
 
 struct SettingsView: View {
     @Environment(\.managedObjectContext) private var viewContext
+    // @EnvironmentObject private var notificationManager: NotificationManager
     @State private var userSettings: UserSettings?
     @State private var showingGoalPicker = false
     @State private var showingSleepTimePicker = false
     @State private var showingLunchTimePicker = false
     @State private var showingTimeZonePicker = false
+    @State private var showingNotificationAlert = false
     
     // Temporary state for pickers
     @State private var tempDailyGoal: Double = 2.0 // hours
@@ -161,19 +163,29 @@ struct SettingsView: View {
                             .foregroundColor(.red)
                             .frame(width: 24)
                         
-                        Text("每日通知")
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("每日通知")
+                                .foregroundColor(.primary)
+                            
+                            // Notification status temporarily disabled
+                            Text("通知功能开发中")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
                         
                         Spacer()
                         
                         Toggle("", isOn: $tempNotificationsEnabled)
-                            .onChange(of: tempNotificationsEnabled) { _ in
-                                saveSettings()
+                            .onChange(of: tempNotificationsEnabled) { newValue in
+                                handleNotificationToggle(newValue)
                             }
                     }
+                    
+                    // Notification permission button temporarily disabled
                 } header: {
                     Text("通知设置")
                 } footer: {
-                    Text("每日晚上发送专注时间总结通知")
+                    Text("每日晚上9点发送专注时间总结通知，包括今日专注时长和鼓励信息")
                 }
                 
                 Section {
@@ -323,6 +335,17 @@ struct SettingsView: View {
         
         let sign = offset >= 0 ? "+" : "-"
         return String(format: "GMT%@%02d:%02d", sign, abs(hours), minutes)
+    }
+    
+    // MARK: - Notification Methods
+    
+    private func handleNotificationToggle(_ enabled: Bool) {
+        // Notification functionality temporarily disabled
+        saveSettings()
+    }
+    
+    private func requestNotificationPermission() {
+        // Notification functionality temporarily disabled
     }
 }
 

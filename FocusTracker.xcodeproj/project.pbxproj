@@ -21,12 +21,10 @@
 		A2110CC82E302FA40066190A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CC62E302FA40066190A /* SettingsView.swift */; };
 		A2110CC92E302FA40066190A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CC52E302FA40066190A /* HomeView.swift */; };
 		A2110CF02E309F020066190A /* FocusDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A2110CEE2E309F020066190A /* FocusDataModel.xcdatamodeld */; };
-		A2110CF12E309F020066190A /* BackgroundDetectionImplementation.md in Resources */ = {isa = PBXBuildFile; fileRef = A2110CEC2E309F020066190A /* BackgroundDetectionImplementation.md */; };
-		A2110CF62E30E7EF0066190A /* BackgroundTaskImplementationSummary 2.md in Resources */ = {isa = PBXBuildFile; fileRef = A2110CF42E30E7EF0066190A /* BackgroundTaskImplementationSummary 2.md */; };
-		A2110CF72E30E7EF0066190A /* CoreDataMigrationGuide 2.md in Resources */ = {isa = PBXBuildFile; fileRef = A2110CF52E30E7EF0066190A /* CoreDataMigrationGuide 2.md */; };
 		A2110CFC2E30E8210066190A /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CF92E30E8210066190A /* StatisticsView.swift */; };
 		A2110CFD2E30E8210066190A /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CFA2E30E8210066190A /* TestView.swift */; };
 		A2110D1C2E30ED740066190A /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D1B2E30ED740066190A /* PersistenceController.swift */; };
+		A2110D242E30FB1B0066190A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D232E30FB1B0066190A /* NotificationManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,14 +61,12 @@
 		A2110CC62E302FA40066190A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A2110CCE2E3036D60066190A /* FocusTrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FocusTrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2110CEB2E3090F40066190A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A2110CEC2E309F020066190A /* BackgroundDetectionImplementation.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = BackgroundDetectionImplementation.md; sourceTree = "<group>"; };
 		A2110CEF2E309F020066190A /* FocusDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FocusDataModel.xcdatamodel; sourceTree = "<group>"; };
-		A2110CF42E30E7EF0066190A /* BackgroundTaskImplementationSummary 2.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "BackgroundTaskImplementationSummary 2.md"; sourceTree = "<group>"; };
-		A2110CF52E30E7EF0066190A /* CoreDataMigrationGuide 2.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "CoreDataMigrationGuide 2.md"; sourceTree = "<group>"; };
 		A2110CF92E30E8210066190A /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
 		A2110CFA2E30E8210066190A /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
 		A2110D0E2E30EAFE0066190A /* FocusTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FocusTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2110D1B2E30ED740066190A /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
+		A2110D232E30FB1B0066190A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -145,7 +141,7 @@
 		A1000016 /* FocusTracker */ = {
 			isa = PBXGroup;
 			children = (
-				A2110CED2E309F020066190A /* Documentation */,
+				A2110D232E30FB1B0066190A /* NotificationManager.swift */,
 				A2110CEE2E309F020066190A /* FocusDataModel.xcdatamodeld */,
 				A2110CEB2E3090F40066190A /* Info.plist */,
 				A2110CC72E302FA40066190A /* Views */,
@@ -179,16 +175,6 @@
 				A2110CC62E302FA40066190A /* SettingsView.swift */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		A2110CED2E309F020066190A /* Documentation */ = {
-			isa = PBXGroup;
-			children = (
-				A2110CEC2E309F020066190A /* BackgroundDetectionImplementation.md */,
-				A2110CF52E30E7EF0066190A /* CoreDataMigrationGuide 2.md */,
-				A2110CF42E30E7EF0066190A /* BackgroundTaskImplementationSummary 2.md */,
-			);
-			path = Documentation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -306,10 +292,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1000008 /* Preview Assets.xcassets in Resources */,
-				A2110CF12E309F020066190A /* BackgroundDetectionImplementation.md in Resources */,
 				A1000005 /* Assets.xcassets in Resources */,
-				A2110CF62E30E7EF0066190A /* BackgroundTaskImplementationSummary 2.md in Resources */,
-				A2110CF72E30E7EF0066190A /* CoreDataMigrationGuide 2.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,6 +323,7 @@
 				A2110CFD2E30E8210066190A /* TestView.swift in Sources */,
 				A2110CC32E3025E90066190A /* UsageMonitor.swift in Sources */,
 				A2110CC42E3025E90066190A /* FocusManager.swift in Sources */,
+				A2110D242E30FB1B0066190A /* NotificationManager.swift in Sources */,
 				A1000018 /* FocusSession+CoreDataProperties.swift in Sources */,
 				A1000014 /* UserSettings+CoreDataClass.swift in Sources */,
 				A2110CF02E309F020066190A /* FocusDataModel.xcdatamodeld in Sources */,
