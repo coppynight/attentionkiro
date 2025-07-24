@@ -10,5 +10,9 @@
 	<array>
 		<string>com.focustracker.app.processing</string>
 	</array>
+	<key>NSDeviceActivityUsageDescription</key>
+	<string>此应用需要访问设备使用数据来分析您的应用使用模式，帮助您更好地了解时间分配情况。</string>
+	<key>NSScreenTimeUsageDescription</key>
+	<string>此应用需要访问屏幕时间数据来提供详细的时间使用分析和个性化建议。</string>
 </dict>
 </plist>

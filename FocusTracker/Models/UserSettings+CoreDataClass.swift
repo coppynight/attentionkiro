@@ -124,14 +124,47 @@ public class UserSettings: NSManagedObject {
         return date
     }
     
+    /// Returns the daily usage goal in hours and minutes format
+    var formattedDailyUsageGoal: String {
+        let hours = Int(dailyUsageGoal) / 3600
+        let minutes = Int(dailyUsageGoal.truncatingRemainder(dividingBy: 3600)) / 60
+        
+        if hours > 0 {
+            return "\(hours)h \(minutes)m"
+        } else {
+            return "\(minutes)m"
+        }
+    }
+    
+    /// Checks if AI analysis is enabled and available
+    var isAIAnalysisAvailable: Bool {
+        return aiAnalysisEnabled
+    }
+    
+    /// Checks if auto-tagging is enabled
+    var isAutoTaggingEnabled: Bool {
+        return autoTaggingEnabled
+    }
+    
+    /// Checks if weekly reports are enabled
+    var isWeeklyReportEnabled: Bool {
+        return weeklyReportEnabled
+    }
+    
     /// Returns default settings
     static func createDefaultSettings(in context: NSManagedObjectContext) -> UserSettings {
         let settings = UserSettings(context: context)
         
-        // Set default values
+        // Set default values for existing settings
         settings.dailyFocusGoal = 2 * 3600 // 2 hours default goal
         settings.notificationsEnabled = true
         settings.lunchBreakEnabled = false
+        
+        // Set default values for new settings
+        settings.dailyUsageGoal = 4 * 3600 // 4 hours default usage goal
+        settings.aiAnalysisEnabled = true
+        settings.autoTaggingEnabled = true
+        settings.weeklyReportEnabled = true
         
         // Default sleep time: 11 PM to 7 AM
         let calendar = Calendar.current

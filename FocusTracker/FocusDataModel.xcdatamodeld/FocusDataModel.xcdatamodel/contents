@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22225" systemVersion="23A344" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AppUsageSession" representedClassName="AppUsageSession" syncable="YES" codeGenerationType="none">
+        <attribute name="appIdentifier" optional="NO" attributeType="String"/>
+        <attribute name="appName" optional="NO" attributeType="String"/>
+        <attribute name="categoryIdentifier" optional="YES" attributeType="String"/>
+        <attribute name="duration" optional="NO" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="endTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="interruptionCount" optional="NO" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="isProductiveTime" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="sceneTag" optional="YES" attributeType="String"/>
+        <attribute name="startTime" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
     <entity name="FocusSession" representedClassName="FocusSession" syncable="YES" codeGenerationType="none">
         <attribute name="duration" optional="NO" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="endTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -7,8 +18,20 @@
         <attribute name="sessionType" optional="NO" attributeType="String" defaultValueString="focus"/>
         <attribute name="startTime" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
+    <entity name="SceneTag" representedClassName="SceneTag" syncable="YES" codeGenerationType="none">
+        <attribute name="associatedApps" optional="YES" attributeType="String"/>
+        <attribute name="color" optional="NO" attributeType="String" defaultValueString="#007AFF"/>
+        <attribute name="createdAt" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="isDefault" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="name" optional="NO" attributeType="String"/>
+        <attribute name="tagID" optional="NO" attributeType="String"/>
+        <attribute name="usageCount" optional="NO" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
     <entity name="UserSettings" representedClassName="UserSettings" syncable="YES" codeGenerationType="none">
+        <attribute name="aiAnalysisEnabled" optional="NO" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="autoTaggingEnabled" optional="NO" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="dailyFocusGoal" optional="NO" attributeType="Double" defaultValueString="7200" usesScalarValueType="YES"/>
+        <attribute name="dailyUsageGoal" optional="NO" attributeType="Double" defaultValueString="14400" usesScalarValueType="YES"/>
         <attribute name="flexibleSleepDays" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="lunchBreakEnabled" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="lunchBreakEnd" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -18,5 +41,6 @@
         <attribute name="sleepStartTime" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="timeZoneOffset" optional="NO" attributeType="Double" defaultValueString="8" usesScalarValueType="YES"/>
         <attribute name="useLocalTimeZone" optional="NO" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="weeklyReportEnabled" optional="NO" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
     </entity>
 </model>

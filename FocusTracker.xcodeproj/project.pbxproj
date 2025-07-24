@@ -11,7 +11,6 @@
 		A1000003 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000002 /* ContentView.swift */; };
 		A1000005 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000004 /* Assets.xcassets */; };
 		A1000008 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000007 /* Preview Assets.xcassets */; };
-		A1000010 /* FocusDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A100000E /* FocusDataModel.xcdatamodeld */; };
 		A1000012 /* FocusSession+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000011 /* FocusSession+CoreDataClass.swift */; };
 		A1000014 /* UserSettings+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000013 /* UserSettings+CoreDataClass.swift */; };
 		A1000018 /* FocusSession+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000017 /* FocusSession+CoreDataProperties.swift */; };
@@ -28,6 +27,16 @@
 		A2110D2D2E3202C10066190A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D2A2E3202C10066190A /* NotificationManager.swift */; };
 		A2110D2E2E3202C10066190A /* NotificationManager+SmartNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D2B2E3202C10066190A /* NotificationManager+SmartNotifications.swift */; };
 		A2110D302E32727C0066190A /* NotificationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D2F2E32727C0066190A /* NotificationDelegate.swift */; };
+		A2110D362E3281FF0066190A /* AppUsageSession+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D322E3281FF0066190A /* AppUsageSession+CoreDataProperties.swift */; };
+		A2110D372E3281FF0066190A /* DataModelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D332E3281FF0066190A /* DataModelTest.swift */; };
+		A2110D382E3281FF0066190A /* SceneTag+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D342E3281FF0066190A /* SceneTag+CoreDataClass.swift */; };
+		A2110D392E3281FF0066190A /* AppUsageSession+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D312E3281FF0066190A /* AppUsageSession+CoreDataClass.swift */; };
+		A2110D3A2E3281FF0066190A /* SceneTag+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D352E3281FF0066190A /* SceneTag+CoreDataProperties.swift */; };
+		A2110D3C2E3285690066190A /* PermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D3B2E3285690066190A /* PermissionManager.swift */; };
+		A2110D3E2E3287920066190A /* TagManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D3D2E3287920066190A /* TagManager.swift */; };
+		A2110D412E3288340066190A /* TagSelectorComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D3F2E3288340066190A /* TagSelectorComponent.swift */; };
+		A2110D432E32883C0066190A /* TagSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D422E32883C0066190A /* TagSelectionView.swift */; };
+		A2110D452E328AF10066190A /* TimeAnalysisManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D442E328AF10066190A /* TimeAnalysisManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,7 +62,6 @@
 		A1000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A1000004 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1000007 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		A100000F /* FocusDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FocusDataModel.xcdatamodel; sourceTree = "<group>"; };
 		A1000011 /* FocusSession+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FocusSession+CoreDataClass.swift"; sourceTree = "<group>"; };
 		A1000013 /* UserSettings+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserSettings+CoreDataClass.swift"; sourceTree = "<group>"; };
 		A1000017 /* FocusSession+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FocusSession+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -73,6 +81,16 @@
 		A2110D2A2E3202C10066190A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		A2110D2B2E3202C10066190A /* NotificationManager+SmartNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationManager+SmartNotifications.swift"; sourceTree = "<group>"; };
 		A2110D2F2E32727C0066190A /* NotificationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDelegate.swift; sourceTree = "<group>"; };
+		A2110D312E3281FF0066190A /* AppUsageSession+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppUsageSession+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A2110D322E3281FF0066190A /* AppUsageSession+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppUsageSession+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A2110D332E3281FF0066190A /* DataModelTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelTest.swift; sourceTree = "<group>"; };
+		A2110D342E3281FF0066190A /* SceneTag+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SceneTag+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A2110D352E3281FF0066190A /* SceneTag+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SceneTag+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A2110D3B2E3285690066190A /* PermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionManager.swift; sourceTree = "<group>"; };
+		A2110D3D2E3287920066190A /* TagManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagManager.swift; sourceTree = "<group>"; };
+		A2110D3F2E3288340066190A /* TagSelectorComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagSelectorComponent.swift; sourceTree = "<group>"; };
+		A2110D422E32883C0066190A /* TagSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagSelectionView.swift; sourceTree = "<group>"; };
+		A2110D442E328AF10066190A /* TimeAnalysisManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeAnalysisManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -136,6 +154,11 @@
 		A1000015 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				A2110D312E3281FF0066190A /* AppUsageSession+CoreDataClass.swift */,
+				A2110D322E3281FF0066190A /* AppUsageSession+CoreDataProperties.swift */,
+				A2110D332E3281FF0066190A /* DataModelTest.swift */,
+				A2110D342E3281FF0066190A /* SceneTag+CoreDataClass.swift */,
+				A2110D352E3281FF0066190A /* SceneTag+CoreDataProperties.swift */,
 				A1000011 /* FocusSession+CoreDataClass.swift */,
 				A1000017 /* FocusSession+CoreDataProperties.swift */,
 				A1000013 /* UserSettings+CoreDataClass.swift */,
@@ -153,7 +176,6 @@
 				A2110CC22E3025E90066190A /* Services */,
 				A1000000 /* FocusTrackerApp.swift */,
 				A1000002 /* ContentView.swift */,
-				A100000E /* FocusDataModel.xcdatamodeld */,
 				A1000015 /* Models */,
 				A1000004 /* Assets.xcassets */,
 				A1000006 /* Preview Content */,
@@ -164,6 +186,9 @@
 		A2110CC22E3025E90066190A /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				A2110D442E328AF10066190A /* TimeAnalysisManager.swift */,
+				A2110D3D2E3287920066190A /* TagManager.swift */,
+				A2110D3B2E3285690066190A /* PermissionManager.swift */,
 				A2110D2F2E32727C0066190A /* NotificationDelegate.swift */,
 				A2110D292E3202C10066190A /* NotificationDelegate.swift */,
 				A2110D2A2E3202C10066190A /* NotificationManager.swift */,
@@ -178,12 +203,22 @@
 		A2110CC72E302FA40066190A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A2110D422E32883C0066190A /* TagSelectionView.swift */,
+				A2110D402E3288340066190A /* Components */,
 				A2110CF92E30E8210066190A /* StatisticsView.swift */,
 				A2110CFA2E30E8210066190A /* TestView.swift */,
 				A2110CC52E302FA40066190A /* HomeView.swift */,
 				A2110CC62E302FA40066190A /* SettingsView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		A2110D402E3288340066190A /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A2110D3F2E3288340066190A /* TagSelectorComponent.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -326,24 +361,33 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1000010 /* FocusDataModel.xcdatamodeld in Sources */,
 				A1000012 /* FocusSession+CoreDataClass.swift in Sources */,
 				A2110D2C2E3202C10066190A /* NotificationDelegate.swift in Sources */,
+				A2110D452E328AF10066190A /* TimeAnalysisManager.swift in Sources */,
+				A2110D3E2E3287920066190A /* TagManager.swift in Sources */,
 				A2110D2D2E3202C10066190A /* NotificationManager.swift in Sources */,
 				A2110D302E32727C0066190A /* NotificationDelegate.swift in Sources */,
 				A2110D2E2E3202C10066190A /* NotificationManager+SmartNotifications.swift in Sources */,
 				A2110CFC2E30E8210066190A /* StatisticsView.swift in Sources */,
+				A2110D412E3288340066190A /* TagSelectorComponent.swift in Sources */,
 				A2110CFD2E30E8210066190A /* TestView.swift in Sources */,
 				A2110CC32E3025E90066190A /* UsageMonitor.swift in Sources */,
 				A2110CC42E3025E90066190A /* FocusManager.swift in Sources */,
 				A1000018 /* FocusSession+CoreDataProperties.swift in Sources */,
 				A1000014 /* UserSettings+CoreDataClass.swift in Sources */,
 				A2110CF02E309F020066190A /* FocusDataModel.xcdatamodeld in Sources */,
+				A2110D362E3281FF0066190A /* AppUsageSession+CoreDataProperties.swift in Sources */,
+				A2110D372E3281FF0066190A /* DataModelTest.swift in Sources */,
+				A2110D3C2E3285690066190A /* PermissionManager.swift in Sources */,
+				A2110D382E3281FF0066190A /* SceneTag+CoreDataClass.swift in Sources */,
+				A2110D392E3281FF0066190A /* AppUsageSession+CoreDataClass.swift in Sources */,
+				A2110D3A2E3281FF0066190A /* SceneTag+CoreDataProperties.swift in Sources */,
 				A2110D1C2E30ED740066190A /* PersistenceController.swift in Sources */,
 				A1000020 /* UserSettings+CoreDataProperties.swift in Sources */,
 				A1000003 /* ContentView.swift in Sources */,
 				A2110CC82E302FA40066190A /* SettingsView.swift in Sources */,
 				A2110CC92E302FA40066190A /* HomeView.swift in Sources */,
+				A2110D432E32883C0066190A /* TagSelectionView.swift in Sources */,
 				A1000001 /* FocusTrackerApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -671,16 +715,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		A100000E /* FocusDataModel.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				A100000F /* FocusDataModel.xcdatamodel */,
-			);
-			currentVersion = A100000F /* FocusDataModel.xcdatamodel */;
-			path = FocusDataModel.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
 		A2110CEE2E309F020066190A /* FocusDataModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
