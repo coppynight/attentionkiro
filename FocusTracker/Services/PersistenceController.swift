@@ -34,7 +34,7 @@ struct PersistenceController {
     init(inMemory: Bool = false) {
         container = NSPersistentContainer(name: "FocusDataModel")
         if inMemory {
-            container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
+            container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
         }
         
         // 启用轻量级迁移
@@ -55,15 +55,22 @@ struct PersistenceController {
                         print("Removed old Core Data store, will recreate")
                         
                         // 重新尝试加载存储
-                        container?.loadPersistentStores { _, error in
-                            if let error = error {
-                                fatalError("Failed to recreate Core Data store: \(error)")
+                        container?.loadPersistentStores { _, recreateError in
+                            if let recreateError = recreateError {
+                                print("Failed to recreate Core Data store: \(recreateError)")
+                                // 在生产环境中，应该有更优雅的错误处理
+                                // 这里暂时使用fatalError，但应该考虑其他恢复策略
+                                fatalError("Failed to recreate Core Data store: \(recreateError)")
                             }
                         }
                     } catch {
+                        print("Failed to remove old Core Data store: \(error)")
+                        // 在生产环境中，应该有更优雅的错误处理
                         fatalError("Failed to remove old Core Data store: \(error)")
                     }
                 } else {
+                    print("Unresolved Core Data error without store URL: \(error), \(error.userInfo)")
+                    // 在生产环境中，应该有更优雅的错误处理
                     fatalError("Unresolved error \(error), \(error.userInfo)")
                 }
             }

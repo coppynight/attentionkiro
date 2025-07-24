@@ -42,7 +42,7 @@ class FocusManager: ObservableObject, FocusManagerProtocol {
     private let usageMonitor: UsageMonitor
     private let viewContext: NSManagedObjectContext
     private var cancellables = Set<AnyCancellable>()
-    // private let notificationManager = NotificationManager.shared
+    @MainActor private let notificationManager = NotificationManager.shared
     
     // MARK: - Initialization
     
@@ -124,6 +124,68 @@ class FocusManager: ObservableObject, FocusManagerProtocol {
     
     // MARK: - Private Methods
     
+    @MainActor
+    private func sendBasicEncouragementIfNeeded(for session: FocusSession) async {
+        let duration = session.duration
+        let hours = Int(duration / 3600)
+        let minutes = Int((duration.truncatingRemainder(dividingBy: 3600)) / 60)
+        
+        // Send encouragement for sessions longer than 1 hour
+        if duration >= 3600 { // 1 hour
+            let message = "太棒了！你刚刚完成了一个 \(hours)小时\(minutes)分钟的专注时段！"
+            await notificationManager.sendEncouragementNotification(message: message)
+        }
+        // Send encouragement for first session of the day
+        else if isFirstSessionOfDay() {
+            let message = "很好的开始！你今天的第一个专注时段已完成，继续保持！"
+            await notificationManager.sendEncouragementNotification(message: message)
+        }
+        // Send encouragement for sessions during typical break times
+        else if isSessionDuringBreakTime(session.startTime) {
+            let message = "在休息时间也能保持专注，你的自律性很强！"
+            await notificationManager.sendEncouragementNotification(message: message)
+        }
+        
+        // Check daily goal achievement
+        let today = Date()
+        let stats = getFocusStatistics(for: today)
+        let userSettings = getUserSettings()
+        
+        // If this session helped achieve the daily goal, send a goal achievement notification
+        if stats.totalFocusTime >= userSettings.dailyFocusGoal && 
+           (stats.totalFocusTime - session.duration) < userSettings.dailyFocusGoal {
+            await notificationManager.sendGoalAchievedNotification(
+                focusTime: stats.totalFocusTime,
+                goal: userSettings.dailyFocusGoal
+            )
+        }
+    }
+    
+    private func isFirstSessionOfDay() -> Bool {
+        let today = Calendar.current.startOfDay(for: Date())
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+        
+        let request: NSFetchRequest<FocusSession> = FocusSession.fetchRequest()
+        request.predicate = NSPredicate(format: "startTime >= %@ AND startTime < %@ AND isValid == YES", 
+                                      today as NSDate, tomorrow as NSDate)
+        request.fetchLimit = 1
+        
+        do {
+            let sessions = try viewContext.fetch(request)
+            return sessions.count <= 1 // Current session is the first or only one
+        } catch {
+            return false
+        }
+    }
+    
+    private func isSessionDuringBreakTime(_ startTime: Date) -> Bool {
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: startTime)
+        
+        // Consider lunch time (12-14) and evening (18-20) as typical break times
+        return (hour >= 12 && hour < 14) || (hour >= 18 && hour < 20)
+    }
+    
     private func setupUsageMonitorCallbacks() {
         usageMonitor.onFocusSessionDetected = { [weak self] startTime, endTime in
             self?.handleFocusSessionDetected(startTime: startTime, endTime: endTime)
@@ -160,10 +222,11 @@ class FocusManager: ObservableObject, FocusManagerProtocol {
                     DispatchQueue.main.async {
                         self.calculateTodaysFocusTime()
                         
-                        // Check for smart notifications
-                        // Task {
-                        //     await self.notificationManager.checkAndSendSmartNotifications(viewContext: self.viewContext)
-                        // }
+                        // Send basic encouragement for good focus sessions
+                        Task { @MainActor in
+                            await self.sendBasicEncouragementIfNeeded(for: focusSession)
+                            await self.notificationManager.checkAndSendSmartNotifications(viewContext: self.viewContext)
+                        }
                     }
                 }
             } catch {

@@ -38,8 +38,9 @@ public class FocusSession: NSManagedObject {
     func endSession() {
         guard endTime == nil else { return }
         
-        endTime = Date()
-        duration = endTime!.timeIntervalSince(startTime)
+        let now = Date()
+        endTime = now
+        duration = now.timeIntervalSince(startTime)
     }
     
     /// Validates if the session meets minimum focus criteria

@@ -3,7 +3,7 @@ import CoreData
 
 struct TestView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    // @EnvironmentObject private var notificationManager: NotificationManager
+    @EnvironmentObject private var notificationManager: NotificationManager
     @State private var testResults: String = "Press buttons to test notifications"
     @State private var isRunningTests = false
     
@@ -131,8 +131,6 @@ struct TestView: View {
     // MARK: - Test Methods
     
     private func testNotificationPermission() {
-        testResults = "通知功能暂时禁用，等待NotificationManager集成\n"
-        /*
         testResults = "正在请求通知权限...\n"
         
         Task {
@@ -142,12 +140,9 @@ struct TestView: View {
                 testResults += "当前授权状态: \(notificationManager.isAuthorized ? "已授权" : "未授权")\n"
             }
         }
-        */
     }
     
     private func testDailySummary() {
-        testResults = "通知功能暂时禁用，等待NotificationManager集成\n"
-        /*
         testResults = "正在发送每日总结通知...\n"
         
         Task {
@@ -162,12 +157,9 @@ struct TestView: View {
                 testResults += "每日总结通知已发送\n"
             }
         }
-        */
     }
     
     private func testGoalAchievement() {
-        testResults = "通知功能暂时禁用，等待NotificationManager集成\n"
-        /*
         testResults = "正在发送目标达成通知...\n"
         
         Task {
@@ -180,12 +172,9 @@ struct TestView: View {
                 testResults += "目标达成通知已发送\n"
             }
         }
-        */
     }
     
     private func testStreakAchievement() {
-        testResults = "通知功能暂时禁用，等待NotificationManager集成\n"
-        /*
         testResults = "正在发送连续达标通知...\n"
         
         Task {
@@ -195,12 +184,9 @@ struct TestView: View {
                 testResults += "连续达标通知已发送 (5天)\n"
             }
         }
-        */
     }
     
     private func testDeclineWarning() {
-        testResults = "通知功能暂时禁用，等待NotificationManager集成\n"
-        /*
         testResults = "正在发送下降提醒通知...\n"
         
         Task {
@@ -213,12 +199,9 @@ struct TestView: View {
                 testResults += "下降提醒通知已发送\n"
             }
         }
-        */
     }
     
     private func testSmartNotifications() {
-        testResults = "通知功能暂时禁用，等待NotificationManager集成\n"
-        /*
         isRunningTests = true
         testResults = "正在测试智能通知系统...\n"
         
@@ -230,6 +213,5 @@ struct TestView: View {
                 isRunningTests = false
             }
         }
-        */
     }
 }

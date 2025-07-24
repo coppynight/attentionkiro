@@ -6,35 +6,48 @@ import UserNotifications
 @main
 struct FocusTrackerApp: App {
     let persistenceController = PersistenceController.shared
-    @StateObject private var focusManager = FocusManager(
-        usageMonitor: UsageMonitor(),
-        viewContext: PersistenceController.shared.container.viewContext
-    )
-    // @StateObject private var notificationManager = NotificationManager.shared
+    @StateObject private var focusManager: FocusManager
+    @StateObject private var notificationManager = NotificationManager.shared
+    
+    init() {
+        // Setup background tasks BEFORE app finishes launching
+        UsageMonitor.registerBackgroundTasks()
+        
+        // Initialize focus manager after background tasks are set up
+        let usageMonitor = UsageMonitor()
+        _focusManager = StateObject(wrappedValue: FocusManager(
+            usageMonitor: usageMonitor,
+            viewContext: PersistenceController.shared.container.viewContext
+        ))
+    }
 
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(focusManager)
-                // .environmentObject(notificationManager)
+                .environmentObject(notificationManager)
                 .onAppear {
-                    setupBackgroundTasks()
                     setupNotifications()
                     focusManager.startMonitoring()
                 }
         }
     }
     
-    private func setupBackgroundTasks() {
-        // Background tasks are now handled by BGTaskScheduler in UsageMonitor
-        // No additional setup needed here
-        
-        print("FocusTrackerApp: Background tasks setup completed")
-    }
+
     
     private func setupNotifications() {
-        // Notification setup temporarily disabled
-        print("FocusTrackerApp: Notifications setup temporarily disabled")
+        Task {
+            notificationManager.setupNotificationDelegate()
+            notificationManager.setupNotificationCategories()
+            await notificationManager.checkAuthorizationStatus()
+            
+            // Request notification permission on first launch if not determined
+            if notificationManager.authorizationStatus == .notDetermined {
+                _ = await notificationManager.requestNotificationPermission()
+            }
+            
+            print("FocusTrackerApp: Notifications setup completed")
+        }
     }
 }

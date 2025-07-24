@@ -42,3 +42,5 @@ xcodebuild -project FocusTracker.xcodeproj clean
 - Use `@FetchRequest` for Core Data queries in SwiftUI
 - Separate Core Data class extensions into +CoreDataClass and +CoreDataProperties files
 - 需要添加文件到工程时请求人工操作
+- 完成每个任务后，对工程进行编译，确保编译通过
+- 需要操作Xcode时请使用MCP

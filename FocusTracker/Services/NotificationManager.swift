@@ -760,6 +760,16 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
     // Handle notification when app is in foreground
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         
+        let userInfo = notification.request.content.userInfo
+        let notificationType = userInfo["type"] as? String ?? ""
+        
+        // Handle scheduled daily summary by sending actual data
+        if notificationType == "scheduled_daily_summary" {
+            Task {
+                await handleScheduledDailySummary()
+            }
+        }
+        
         // Show notification even when app is in foreground
         completionHandler([.banner, .sound, .badge])
     }
@@ -800,6 +810,16 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         }
         
         completionHandler()
+    }
+    
+    // MARK: - Scheduled Notification Handling
+    
+    private func handleScheduledDailySummary() async {
+        // Get the main context for data access
+        let viewContext = PersistenceController.shared.container.viewContext
+        
+        // Send the actual daily summary with data
+        await NotificationManager.shared.sendScheduledDailySummary(viewContext: viewContext)
     }
 }
 

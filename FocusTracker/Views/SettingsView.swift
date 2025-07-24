@@ -3,7 +3,7 @@ import CoreData
 
 struct SettingsView: View {
     @Environment(\.managedObjectContext) private var viewContext
-    // @EnvironmentObject private var notificationManager: NotificationManager
+    @EnvironmentObject private var notificationManager: NotificationManager
     @State private var userSettings: UserSettings?
     @State private var showingGoalPicker = false
     @State private var showingSleepTimePicker = false
@@ -22,6 +22,39 @@ struct SettingsView: View {
     @State private var tempUseLocalTimeZone = true
     @State private var tempTimeZoneOffset: Double = 0.0
     @State private var tempFlexibleSleepDays = false
+    
+    // Computed properties for notification status
+    private var notificationStatusText: String {
+        switch notificationManager.authorizationStatus {
+        case .authorized:
+            return tempNotificationsEnabled ? "已启用" : "已禁用"
+        case .denied:
+            return "权限被拒绝"
+        case .notDetermined:
+            return "需要权限"
+        case .provisional:
+            return "临时授权"
+        case .ephemeral:
+            return "临时权限"
+        @unknown default:
+            return "未知状态"
+        }
+    }
+    
+    private var notificationStatusColor: Color {
+        switch notificationManager.authorizationStatus {
+        case .authorized:
+            return tempNotificationsEnabled ? .green : .secondary
+        case .denied:
+            return .red
+        case .notDetermined:
+            return .orange
+        case .provisional, .ephemeral:
+            return .blue
+        @unknown default:
+            return .secondary
+        }
+    }
     
     var body: some View {
         NavigationView {
@@ -167,10 +200,9 @@ struct SettingsView: View {
                             Text("每日通知")
                                 .foregroundColor(.primary)
                             
-                            // Notification status temporarily disabled
-                            Text("通知功能开发中")
+                            Text(notificationStatusText)
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(notificationStatusColor)
                         }
                         
                         Spacer()
@@ -181,11 +213,36 @@ struct SettingsView: View {
                             }
                     }
                     
-                    // Notification permission button temporarily disabled
+                    if tempNotificationsEnabled && !notificationManager.isAuthorized {
+                        Button(action: {
+                            requestNotificationPermission()
+                        }) {
+                            HStack {
+                                Image(systemName: "exclamationmark.triangle.fill")
+                                    .foregroundColor(.orange)
+                                    .frame(width: 24)
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("需要通知权限")
+                                        .foregroundColor(.primary)
+                                    
+                                    Text("点击以请求通知权限")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.secondary)
+                                    .font(.caption)
+                            }
+                        }
+                    }
                 } header: {
                     Text("通知设置")
                 } footer: {
-                    Text("每日晚上9点发送专注时间总结通知，包括今日专注时长和鼓励信息")
+                    Text("每日晚上9点发送专注时间总结通知，包括今日专注时长和鼓励信息。还会在达成目标、连续达标和专注下降时发送智能提醒。")
                 }
                 
                 Section {
@@ -340,12 +397,28 @@ struct SettingsView: View {
     // MARK: - Notification Methods
     
     private func handleNotificationToggle(_ enabled: Bool) {
-        // Notification functionality temporarily disabled
+        Task {
+            await notificationManager.updateNotificationSettings(enabled: enabled)
+            
+            // Update the authorization status after the toggle
+            await notificationManager.checkAuthorizationStatus()
+        }
+        
         saveSettings()
     }
     
     private func requestNotificationPermission() {
-        // Notification functionality temporarily disabled
+        Task {
+            let granted = await notificationManager.requestNotificationPermission()
+            
+            if granted {
+                tempNotificationsEnabled = true
+                saveSettings()
+            } else {
+                // Show alert explaining why notifications are important
+                showingNotificationAlert = true
+            }
+        }
     }
 }
 

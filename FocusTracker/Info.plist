@@ -4,7 +4,6 @@
 <dict>
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>processing</string>
 		<string>background-processing</string>
 	</array>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>

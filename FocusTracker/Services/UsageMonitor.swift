@@ -13,6 +13,11 @@ protocol UsageMonitorProtocol {
 /// Monitors device usage patterns to detect focus sessions
 class UsageMonitor: ObservableObject, UsageMonitorProtocol {
     
+    // MARK: - Static Properties
+    
+    static let backgroundProcessingTaskID = "com.focustracker.app.processing"
+    private static var backgroundTaskHandler: ((BGProcessingTask) -> Void)?
+    
     // MARK: - Properties
     
     @Published var isMonitoring = false
@@ -26,13 +31,29 @@ class UsageMonitor: ObservableObject, UsageMonitorProtocol {
     internal let minimumFocusTime: TimeInterval = 30 * 60 // 30 minutes
     private var cancellables = Set<AnyCancellable>()
     private var backgroundTaskID: UIBackgroundTaskIdentifier = .invalid
-    private var backgroundProcessingTaskID = "com.focustracker.app.processing"
     
     // MARK: - Initialization
     
     init() {
         setupNotificationObservers()
-        setupBackgroundTasks()
+        // Set up the background task handler for this instance
+        UsageMonitor.backgroundTaskHandler = { [weak self] task in
+            self?.handleBackgroundProcessing(task: task)
+        }
+    }
+    
+    // MARK: - Static Methods
+    
+    static func registerBackgroundTasks() {
+        // Register background processing task
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: backgroundProcessingTaskID, using: nil) { task in
+            guard let processingTask = task as? BGProcessingTask else {
+                print("UsageMonitor: Failed to cast task to BGProcessingTask")
+                task.setTaskCompleted(success: false)
+                return
+            }
+            backgroundTaskHandler?(processingTask)
+        }
     }
     
     deinit {
@@ -94,12 +115,7 @@ class UsageMonitor: ObservableObject, UsageMonitorProtocol {
             .store(in: &cancellables)
     }
     
-    private func setupBackgroundTasks() {
-        // Register background processing task
-        BGTaskScheduler.shared.register(forTaskWithIdentifier: backgroundProcessingTaskID, using: nil) { [weak self] task in
-            self?.handleBackgroundProcessing(task: task as! BGProcessingTask)
-        }
-    }
+
     
     internal func handleAppBecomeActive() {
         guard isMonitoring else { return }
@@ -177,7 +193,7 @@ class UsageMonitor: ObservableObject, UsageMonitorProtocol {
     }
     
     private func scheduleBackgroundProcessing() {
-        let request = BGProcessingTaskRequest(identifier: backgroundProcessingTaskID)
+        let request = BGProcessingTaskRequest(identifier: UsageMonitor.backgroundProcessingTaskID)
         request.requiresNetworkConnectivity = false
         request.requiresExternalPower = false
         request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60) // 15 minutes from now

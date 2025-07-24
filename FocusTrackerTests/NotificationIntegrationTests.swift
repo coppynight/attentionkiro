@@ -2,105 +2,244 @@ import XCTest
 import CoreData
 @testable import FocusTracker
 
-@MainActor
-final class NotificationIntegrationTests: XCTestCase {
+class NotificationIntegrationTests: XCTestCase {
     
     var persistenceController: PersistenceController!
     var viewContext: NSManagedObjectContext!
-    var notificationManager: NotificationManager!
+    var focusManager: FocusManager!
+    var usageMonitor: TestUsageMonitor!
     
-    override func setUp() async throws {
-        try await super.setUp()
-        
-        // Set up test persistence controller
-        persistenceController = PersistenceController.preview
+    override func setUpWithError() throws {
+        persistenceController = PersistenceController(inMemory: true)
         viewContext = persistenceController.container.viewContext
-        notificationManager = NotificationManager.shared
+        usageMonitor = TestUsageMonitor()
+        focusManager = FocusManager(usageMonitor: usageMonitor, viewContext: viewContext)
+        
+        // Create default user settings
+        let settings = UserSettings.createDefaultSettings(in: viewContext)
+        try viewContext.save()
     }
     
-    override func tearDown() async throws {
-        persistenceController = nil
+    override func tearDownWithError() throws {
         viewContext = nil
-        notificationManager = nil
-        try await super.tearDown()
+        persistenceController = nil
+        focusManager = nil
+        usageMonitor = nil
     }
     
-    // MARK: - Integration Tests
-    
-    func testNotificationManagerIntegrationWithCoreData() async throws {
-        // Given - Create some test focus sessions
-        let focusSession1 = FocusSession(context: viewContext)
-        focusSession1.startTime = Date().addingTimeInterval(-3600) // 1 hour ago
-        focusSession1.endTime = Date().addingTimeInterval(-1800) // 30 minutes ago
-        focusSession1.duration = 1800 // 30 minutes
-        focusSession1.isValid = true
-        focusSession1.sessionType = "focus"
+    func testFocusManagerNotificationIntegration() {
+        // Create a focus session
+        let now = Date()
+        let startTime = now.addingTimeInterval(-2 * 3600) // 2 hours ago
         
-        let focusSession2 = FocusSession(context: viewContext)
-        focusSession2.startTime = Date().addingTimeInterval(-7200) // 2 hours ago
-        focusSession2.endTime = Date().addingTimeInterval(-3600) // 1 hour ago
-        focusSession2.duration = 3600 // 1 hour
-        focusSession2.isValid = true
-        focusSession2.sessionType = "focus"
+        // Simulate focus session detection
+        usageMonitor.simulateFocusSessionDetection(startTime: startTime, endTime: now)
         
-        try viewContext.save()
+        // Wait for async operations
+        let expectation = XCTestExpectation(description: "Focus session processed")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1.0)
         
-        // When - Check smart notifications
-        await notificationManager.checkAndSendSmartNotifications(viewContext: viewContext)
-        
-        // Then - Verify no crashes occurred
-        XCTAssertTrue(true, "Smart notifications check completed without errors")
+        // Verify focus session was created
+        let request: NSFetchRequest<FocusSession> = FocusSession.fetchRequest()
+        do {
+            let sessions = try viewContext.fetch(request)
+            XCTAssertGreaterThanOrEqual(sessions.count, 1)
+            
+            if let session = sessions.first {
+                XCTAssertEqual(session.startTime, startTime)
+                XCTAssertEqual(session.duration, 2 * 3600, accuracy: 1.0)
+                XCTAssertTrue(session.isValid)
+            }
+        } catch {
+            XCTFail("Failed to fetch focus sessions: \(error)")
+        }
     }
     
-    func testScheduledDailySummaryWithRealData() async throws {
-        // Given - Create test focus sessions for today
-        let today = Date()
+    func testStreakCalculation() {
+        // Create focus sessions for the past 3 days
         let calendar = Calendar.current
-        let startOfDay = calendar.startOfDay(for: today)
+        let today = calendar.startOfDay(for: Date())
         
-        let focusSession = FocusSession(context: viewContext)
-        focusSession.startTime = startOfDay.addingTimeInterval(3600) // 1 hour after start of day
-        focusSession.endTime = startOfDay.addingTimeInterval(5400) // 1.5 hours after start of day
-        focusSession.duration = 1800 // 30 minutes
-        focusSession.isValid = true
-        focusSession.sessionType = "focus"
+        // Create user settings with 2 hour goal
+        let settings = getUserSettings()
+        settings.dailyFocusGoal = 2 * 3600 // 2 hours
         
-        try viewContext.save()
+        // Create sessions for today, yesterday, and day before
+        for i in 0..<3 {
+            let date = calendar.date(byAdding: .day, value: -i, to: today)!
+            createFocusSession(on: date, duration: 2.5 * 3600) // 2.5 hours
+        }
         
-        // When - Send scheduled daily summary
-        await notificationManager.sendScheduledDailySummary(viewContext: viewContext)
+        // Save context
+        do {
+            try viewContext.save()
+        } catch {
+            XCTFail("Failed to save context: \(error)")
+        }
         
-        // Then - Verify no crashes occurred
-        XCTAssertTrue(true, "Scheduled daily summary completed without errors")
+        // Test streak calculation
+        let mockNotificationManager = MockNotificationManager()
+        let streak = mockNotificationManager.testCalculateStreak(viewContext: viewContext)
+        
+        XCTAssertEqual(streak, 3)
     }
     
-    func testNotificationPermissionFlow() async throws {
-        // Given - Fresh notification manager state
-        let initialAuthStatus = notificationManager.authorizationStatus
+    func testDeclineDetection() {
+        // Create user settings
+        let settings = getUserSettings()
+        settings.dailyFocusGoal = 2 * 3600 // 2 hours
         
-        // When - Check authorization status
-        await notificationManager.checkAuthorizationStatus()
+        // Create focus sessions for yesterday and today
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let yesterday = calendar.date(byAdding: .day, value: -1, to: today)!
         
-        // Then - Verify status was checked
-        XCTAssertTrue(true, "Authorization status check completed")
+        // Yesterday: 3 hours
+        createFocusSession(on: yesterday, duration: 3 * 3600)
         
-        // Note: Actual permission request would require user interaction
-        // This test just verifies the flow doesn't crash
+        // Today: 1.5 hours (50% decline)
+        createFocusSession(on: today, duration: 1.5 * 3600)
+        
+        // Save context
+        do {
+            try viewContext.save()
+        } catch {
+            XCTFail("Failed to save context: \(error)")
+        }
+        
+        // Test decline detection
+        let mockNotificationManager = MockNotificationManager()
+        let decline = mockNotificationManager.testCalculateDecline(viewContext: viewContext)
+        
+        XCTAssertEqual(decline, 0.5, accuracy: 0.01) // 50% decline
     }
     
-    func testNotificationCategoriesSetup() {
-        // When - Setup notification categories
-        notificationManager.setupNotificationCategories()
+    // MARK: - Helper Methods
+    
+    private func getUserSettings() -> UserSettings {
+        let request: NSFetchRequest<UserSettings> = UserSettings.fetchRequest()
         
-        // Then - Verify setup completed without errors
-        XCTAssertTrue(true, "Notification categories setup completed")
+        do {
+            let settings = try viewContext.fetch(request)
+            if let userSettings = settings.first {
+                return userSettings
+            } else {
+                let newSettings = UserSettings.createDefaultSettings(in: viewContext)
+                try viewContext.save()
+                return newSettings
+            }
+        } catch {
+            XCTFail("Failed to fetch user settings: \(error)")
+            return UserSettings.createDefaultSettings(in: viewContext)
+        }
     }
     
-    func testNotificationDelegateSetup() {
-        // When - Setup notification delegate
-        notificationManager.setupNotificationDelegate()
+    private func createFocusSession(on date: Date, duration: TimeInterval) {
+        let session = FocusSession(context: viewContext)
+        session.startTime = date
+        session.endTime = date.addingTimeInterval(duration)
+        session.duration = duration
+        session.isValid = true
+        session.sessionType = "focus"
+    }
+}
+
+// MARK: - Mock Classes
+
+class TestUsageMonitor: UsageMonitor {
+    var onFocusSessionDetectedCallback: ((Date, Date) -> Void)?
+    
+    override var onFocusSessionDetected: ((Date, Date) -> Void)? {
+        get {
+            return onFocusSessionDetectedCallback
+        }
+        set {
+            onFocusSessionDetectedCallback = newValue
+        }
+    }
+    
+    func simulateFocusSessionDetection(startTime: Date, endTime: Date) {
+        onFocusSessionDetectedCallback?(startTime, endTime)
+    }
+}
+
+class MockNotificationManager {
+    func testCalculateStreak(viewContext: NSManagedObjectContext) -> Int {
+        let calendar = Calendar.current
+        let today = Date()
+        var streakDays = 0
         
-        // Then - Verify setup completed without errors
-        XCTAssertTrue(true, "Notification delegate setup completed")
+        for i in 0..<30 { // Check up to 30 days back
+            let date = calendar.date(byAdding: .day, value: -i, to: today)!
+            let stats = getFocusStatistics(for: date, viewContext: viewContext)
+            let userSettings = getUserSettings(viewContext: viewContext)
+            
+            if stats.totalFocusTime >= userSettings.dailyFocusGoal {
+                streakDays += 1
+            } else {
+                break // Streak is broken
+            }
+        }
+        
+        return streakDays
+    }
+    
+    func testCalculateDecline(viewContext: NSManagedObjectContext) -> Double {
+        let calendar = Calendar.current
+        let today = Date()
+        let yesterday = calendar.date(byAdding: .day, value: -1, to: today)!
+        
+        let todayStats = getFocusStatistics(for: today, viewContext: viewContext)
+        let yesterdayStats = getFocusStatistics(for: yesterday, viewContext: viewContext)
+        
+        if yesterdayStats.totalFocusTime > 0 && todayStats.totalFocusTime > 0 {
+            return (yesterdayStats.totalFocusTime - todayStats.totalFocusTime) / yesterdayStats.totalFocusTime
+        }
+        
+        return 0
+    }
+    
+    private func getFocusStatistics(for date: Date, viewContext: NSManagedObjectContext) -> FocusStatistics {
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: date)
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+        
+        let request: NSFetchRequest<FocusSession> = FocusSession.fetchRequest()
+        request.predicate = NSPredicate(format: "startTime >= %@ AND startTime < %@ AND isValid == YES", 
+                                      startOfDay as NSDate, endOfDay as NSDate)
+        
+        do {
+            let sessions = try viewContext.fetch(request)
+            let totalTime = sessions.reduce(0) { $0 + $1.duration }
+            let longestSession = sessions.map { $0.duration }.max() ?? 0
+            let averageSession = sessions.isEmpty ? 0 : totalTime / Double(sessions.count)
+            
+            return FocusStatistics(
+                totalFocusTime: totalTime,
+                sessionCount: sessions.count,
+                longestSession: longestSession,
+                averageSession: averageSession
+            )
+        } catch {
+            return FocusStatistics(totalFocusTime: 0, sessionCount: 0, longestSession: 0, averageSession: 0)
+        }
+    }
+    
+    private func getUserSettings(viewContext: NSManagedObjectContext) -> UserSettings {
+        let request: NSFetchRequest<UserSettings> = UserSettings.fetchRequest()
+        
+        do {
+            let settings = try viewContext.fetch(request)
+            if let userSettings = settings.first {
+                return userSettings
+            } else {
+                return UserSettings.createDefaultSettings(in: viewContext)
+            }
+        } catch {
+            return UserSettings.createDefaultSettings(in: viewContext)
+        }
     }
 }

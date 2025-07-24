@@ -24,7 +24,10 @@
 		A2110CFC2E30E8210066190A /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CF92E30E8210066190A /* StatisticsView.swift */; };
 		A2110CFD2E30E8210066190A /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CFA2E30E8210066190A /* TestView.swift */; };
 		A2110D1C2E30ED740066190A /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D1B2E30ED740066190A /* PersistenceController.swift */; };
-		A2110D242E30FB1B0066190A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D232E30FB1B0066190A /* NotificationManager.swift */; };
+		A2110D2C2E3202C10066190A /* NotificationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D292E3202C10066190A /* NotificationDelegate.swift */; };
+		A2110D2D2E3202C10066190A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D2A2E3202C10066190A /* NotificationManager.swift */; };
+		A2110D2E2E3202C10066190A /* NotificationManager+SmartNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D2B2E3202C10066190A /* NotificationManager+SmartNotifications.swift */; };
+		A2110D302E32727C0066190A /* NotificationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D2F2E32727C0066190A /* NotificationDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,7 +69,10 @@
 		A2110CFA2E30E8210066190A /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
 		A2110D0E2E30EAFE0066190A /* FocusTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FocusTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2110D1B2E30ED740066190A /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
-		A2110D232E30FB1B0066190A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		A2110D292E3202C10066190A /* NotificationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDelegate.swift; sourceTree = "<group>"; };
+		A2110D2A2E3202C10066190A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		A2110D2B2E3202C10066190A /* NotificationManager+SmartNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationManager+SmartNotifications.swift"; sourceTree = "<group>"; };
+		A2110D2F2E32727C0066190A /* NotificationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -141,7 +147,6 @@
 		A1000016 /* FocusTracker */ = {
 			isa = PBXGroup;
 			children = (
-				A2110D232E30FB1B0066190A /* NotificationManager.swift */,
 				A2110CEE2E309F020066190A /* FocusDataModel.xcdatamodeld */,
 				A2110CEB2E3090F40066190A /* Info.plist */,
 				A2110CC72E302FA40066190A /* Views */,
@@ -159,6 +164,10 @@
 		A2110CC22E3025E90066190A /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				A2110D2F2E32727C0066190A /* NotificationDelegate.swift */,
+				A2110D292E3202C10066190A /* NotificationDelegate.swift */,
+				A2110D2A2E3202C10066190A /* NotificationManager.swift */,
+				A2110D2B2E3202C10066190A /* NotificationManager+SmartNotifications.swift */,
 				A2110D1B2E30ED740066190A /* PersistenceController.swift */,
 				A2110CC02E3025E90066190A /* FocusManager.swift */,
 				A2110CC12E3025E90066190A /* UsageMonitor.swift */,
@@ -319,11 +328,14 @@
 			files = (
 				A1000010 /* FocusDataModel.xcdatamodeld in Sources */,
 				A1000012 /* FocusSession+CoreDataClass.swift in Sources */,
+				A2110D2C2E3202C10066190A /* NotificationDelegate.swift in Sources */,
+				A2110D2D2E3202C10066190A /* NotificationManager.swift in Sources */,
+				A2110D302E32727C0066190A /* NotificationDelegate.swift in Sources */,
+				A2110D2E2E3202C10066190A /* NotificationManager+SmartNotifications.swift in Sources */,
 				A2110CFC2E30E8210066190A /* StatisticsView.swift in Sources */,
 				A2110CFD2E30E8210066190A /* TestView.swift in Sources */,
 				A2110CC32E3025E90066190A /* UsageMonitor.swift in Sources */,
 				A2110CC42E3025E90066190A /* FocusManager.swift in Sources */,
-				A2110D242E30FB1B0066190A /* NotificationManager.swift in Sources */,
 				A1000018 /* FocusSession+CoreDataProperties.swift in Sources */,
 				A1000014 /* UserSettings+CoreDataClass.swift in Sources */,
 				A2110CF02E309F020066190A /* FocusDataModel.xcdatamodeld in Sources */,

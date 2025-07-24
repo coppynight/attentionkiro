@@ -5,6 +5,7 @@ import Combine
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var focusManager: FocusManager
+    @EnvironmentObject private var notificationManager: NotificationManager
     @State private var selectedTab = 0
 
     var body: some View {
@@ -40,7 +41,15 @@ struct ContentView: View {
             #endif
         }
         .accentColor(.blue)
-        // Navigation notifications temporarily disabled
+        .onReceive(NotificationCenter.default.publisher(for: .navigateToHome)) { _ in
+            selectedTab = 0
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .navigateToStatistics)) { _ in
+            selectedTab = 1
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .navigateToSettings)) { _ in
+            selectedTab = 2
+        }
     }
 
 }
@@ -53,6 +62,6 @@ struct ContentView_Previews: PreviewProvider {
                 usageMonitor: UsageMonitor(),
                 viewContext: PersistenceController.preview.container.viewContext
             ))
-            // .environmentObject(NotificationManager.shared)
+            .environmentObject(NotificationManager.shared)
     }
 }
