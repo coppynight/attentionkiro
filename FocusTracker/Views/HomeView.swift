@@ -34,35 +34,19 @@ struct HomeView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: 24) {
-                    // Focus Status Card
-                    FocusStatusCard()
+                VStack(spacing: 20) {
+                    // 专注时间概览
+                    FocusTimeOverviewCard()
                     
-                    // Current Session Card (if in focus)
-                    if focusManager.isInFocusMode || focusManager.currentSession != nil {
-                        CurrentSessionCard()
-                    }
+                    // 今日标签分布
+                    TodayTagDistributionCard()
                     
-                    // Today's Focus Time Card (existing)
-                    TodaysFocusCard()
-                    
-                    // NEW: Time Usage Ring View (shows app usage distribution)
-                    TimeUsageRingCard()
-                    
-                    // NEW: App Breakdown View
-                    AppBreakdownCard()
-                    
-                    // NEW: Scene Tag Summary View
-                    SceneTagSummaryCard()
-                    
-                    // Recent Sessions Card (existing)
-                    RecentSessionsCard()
-                    
-                    // 开发测试按钮已移至测试目标
+                    // 时间使用洞察
+                    TimeInsightsCard()
                 }
                 .padding()
             }
-            .navigationTitle("专注追踪")
+            .navigationTitle("我的时间")
             .navigationBarTitleDisplayMode(.large)
         }
         .onAppear {
@@ -79,110 +63,19 @@ struct HomeView: View {
     }
 }
 
-// MARK: - Focus Status Card
-struct FocusStatusCard: View {
-    @EnvironmentObject private var focusManager: FocusManager
-    
-    var body: some View {
-        HStack(spacing: 16) {
-            // Status indicator
-            VStack(spacing: 8) {
-                ZStack {
-                    Circle()
-                        .fill(statusBackgroundColor)
-                        .frame(width: 50, height: 50)
-                    
-                    Image(systemName: statusIcon)
-                        .font(.title2)
-                        .foregroundColor(.white)
-                }
-                
-                Text(statusText)
-                    .font(.caption)
-                    .foregroundColor(statusColor)
-            }
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text("当前状态")
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                
-                Text(statusDescription)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.leading)
-            }
-            
-            Spacer()
-        }
-        .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
-    }
-    
-    private var statusIcon: String {
-        if focusManager.isInFocusMode {
-            return "brain.head.profile"
-        } else if focusManager.isMonitoring {
-            return "eye.fill"
-        } else {
-            return "pause.circle.fill"
-        }
-    }
-    
-    private var statusText: String {
-        if focusManager.isInFocusMode {
-            return "专注中"
-        } else if focusManager.isMonitoring {
-            return "监测中"
-        } else {
-            return "已暂停"
-        }
-    }
-    
-    private var statusColor: Color {
-        if focusManager.isInFocusMode {
-            return .green
-        } else if focusManager.isMonitoring {
-            return .blue
-        } else {
-            return .red
-        }
-    }
-    
-    private var statusBackgroundColor: Color {
-        if focusManager.isInFocusMode {
-            return .green
-        } else if focusManager.isMonitoring {
-            return .blue
-        } else {
-            return .red
-        }
-    }
-    
-    private var statusDescription: String {
-        if focusManager.isInFocusMode {
-            return "您正在专注中，继续保持！"
-        } else if focusManager.isMonitoring {
-            return "正在监测您的专注状态"
-        } else {
-            return "专注监测已暂停"
-        }
-    }
-}
-
-// MARK: - Today's Focus Card
-struct TodaysFocusCard: View {
+// MARK: - Focus Time Overview Card
+struct FocusTimeOverviewCard: View {
     @EnvironmentObject private var focusManager: FocusManager
     @Environment(\.managedObjectContext) private var viewContext
     @State private var dailyGoal: TimeInterval = 2 * 60 * 60 // Default 2 hours
     
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 16) {
             HStack {
                 Text("今日专注时间")
-                    .font(.headline)
-                    .foregroundColor(.secondary)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
                 Spacer()
             }
             
@@ -191,36 +84,32 @@ struct TodaysFocusCard: View {
                 // Background ring
                 Circle()
                     .stroke(Color(.systemGray5), lineWidth: 12)
-                    .frame(width: 160, height: 160)
+                    .frame(width: 120, height: 120)
                 
                 // Progress ring
                 Circle()
                     .trim(from: 0, to: min(focusManager.todaysFocusTime / dailyGoal, 1.0))
                     .stroke(
                         LinearGradient(
-                            colors: [.blue, .cyan],
+                            colors: [.green, .blue],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
                         style: StrokeStyle(lineWidth: 12, lineCap: .round)
                     )
-                    .frame(width: 160, height: 160)
+                    .frame(width: 120, height: 120)
                     .rotationEffect(.degrees(-90))
                     .animation(.easeInOut(duration: 1.0), value: focusManager.todaysFocusTime)
                 
                 // Center content
                 VStack(spacing: 4) {
                     Text(formatTime(focusManager.todaysFocusTime))
-                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundColor(.primary)
                     
                     Text("/ \(formatTime(dailyGoal))")
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    
-                    Text("\(Int((focusManager.todaysFocusTime / dailyGoal) * 100))%")
-                        .font(.caption2)
-                        .foregroundColor(.blue)
                 }
             }
             
@@ -238,7 +127,7 @@ struct TodaysFocusCard: View {
         }
         .padding()
         .background(Color(.systemGray6))
-        .cornerRadius(12)
+        .cornerRadius(16)
         .onAppear {
             loadDailyGoal()
         }
@@ -300,169 +189,137 @@ struct TodaysFocusCard: View {
     }
 }
 
-// MARK: - Current Session Card
-struct CurrentSessionCard: View {
-    @EnvironmentObject private var focusManager: FocusManager
-    @State private var currentTime = Date()
+// MARK: - Today Tag Distribution Card
+struct TodayTagDistributionCard: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    @StateObject private var tagManager: TagManager
+    @State private var tagDistribution: [TagDistribution] = []
+    @State private var totalTaggedTime: TimeInterval = 0
     
-    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    init() {
+        let context = PersistenceController.shared.container.viewContext
+        self._tagManager = StateObject(wrappedValue: TagManager(viewContext: context))
+    }
     
     var body: some View {
         VStack(spacing: 16) {
             HStack {
-                Image(systemName: "timer")
-                    .foregroundColor(.green)
-                
-                Text("当前专注时段")
-                    .font(.headline)
+                Text("今日时间分类")
+                    .font(.title2)
+                    .fontWeight(.semibold)
                     .foregroundColor(.primary)
-                
-                Spacer()
-                
-                // Live indicator
-                HStack(spacing: 4) {
-                    Circle()
-                        .fill(Color.red)
-                        .frame(width: 8, height: 8)
-                        .scaleEffect(1.0)
-                        .animation(.easeInOut(duration: 1.0).repeatForever(), value: currentTime)
-                    
-                    Text("LIVE")
-                        .font(.caption2)
-                        .foregroundColor(.red)
-                }
-            }
-            
-            if let session = focusManager.currentSession {
-                VStack(spacing: 8) {
-                    Text(formatCurrentSessionTime(session.startTime))
-                        .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundColor(.green)
-                    
-                    Text("开始时间: \(formatTime(session.startTime))")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-            } else {
-                // Estimated current focus time based on last screen lock
-                VStack(spacing: 8) {
-                    Text("正在专注...")
-                        .font(.system(size: 24, weight: .medium, design: .rounded))
-                        .foregroundColor(.green)
-                    
-                    Text("继续保持专注状态")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-            }
-        }
-        .padding()
-        .background(
-            LinearGradient(
-                colors: [Color.green.opacity(0.1), Color.blue.opacity(0.1)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
-        .cornerRadius(12)
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.green.opacity(0.3), lineWidth: 1)
-        )
-        .onReceive(timer) { _ in
-            currentTime = Date()
-        }
-    }
-    
-    private func formatCurrentSessionTime(_ startTime: Date) -> String {
-        let duration = currentTime.timeIntervalSince(startTime)
-        let hours = Int(duration) / 3600
-        let minutes = Int(duration.truncatingRemainder(dividingBy: 3600)) / 60
-        let seconds = Int(duration.truncatingRemainder(dividingBy: 60))
-        
-        if hours > 0 {
-            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
-        } else {
-            return String(format: "%02d:%02d", minutes, seconds)
-        }
-    }
-    
-    private func formatTime(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        formatter.locale = Locale(identifier: "zh_CN")
-        return formatter.string(from: date)
-    }
-}
-
-// MARK: - Recent Sessions Card
-struct RecentSessionsCard: View {
-    @Environment(\.managedObjectContext) private var viewContext
-    
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \FocusSession.startTime, ascending: false)],
-        animation: .default)
-    private var focusSessions: FetchedResults<FocusSession>
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                Text("最近专注记录")
-                    .font(.headline)
-                    .foregroundColor(.secondary)
                 Spacer()
             }
             
-            if focusSessions.isEmpty {
-                Text("暂无专注记录")
-                    .foregroundColor(.secondary)
-                    .italic()
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.vertical, 20)
+            if tagDistribution.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "tag")
+                        .font(.system(size: 40))
+                        .foregroundColor(.secondary)
+                    
+                    Text("暂无标签分类数据")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.vertical, 20)
             } else {
-                LazyVStack(spacing: 8) {
-                    ForEach(Array(focusSessions.prefix(5)), id: \.objectID) { session in
-                        SessionRowView(session: session)
+                VStack(spacing: 12) {
+                    ForEach(Array(tagDistribution.prefix(4)), id: \.tagName) { distribution in
+                        TagDistributionRow(distribution: distribution, totalTime: totalTaggedTime)
+                    }
+                    
+                    if tagDistribution.count > 4 {
+                        HStack {
+                            Text("还有 \(tagDistribution.count - 4) 个标签")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Spacer()
+                        }
+                        .padding(.horizontal, 4)
                     }
                 }
             }
         }
         .padding()
         .background(Color(.systemGray6))
-        .cornerRadius(12)
+        .cornerRadius(16)
+        .onAppear {
+            loadTodayTagDistribution()
+        }
+    }
+    
+    private func loadTodayTagDistribution() {
+        tagDistribution = tagManager.getTagDistribution(for: Date())
+        totalTaggedTime = tagDistribution.reduce(0) { $0 + $1.usageTime }
     }
 }
 
-// MARK: - Session Row View
-struct SessionRowView: View {
-    let session: FocusSession
+struct TagDistributionRow: View {
+    let distribution: TagDistribution
+    let totalTime: TimeInterval
     
     var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(formatTime(session.duration))
-                    .font(.headline)
-                    .foregroundColor(session.isValid ? .primary : .secondary)
+        HStack(spacing: 12) {
+            // 标签颜色指示器
+            Circle()
+                .fill(tagColor)
+                .frame(width: 12, height: 12)
+            
+            // 标签信息
+            VStack(alignment: .leading, spacing: 2) {
+                Text(distribution.tagName)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(.primary)
+                    .lineLimit(1)
                 
-                Text(formatDate(session.startTime))
+                Text("\(distribution.sessionCount) 次使用")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
             
             Spacer()
             
-            if session.isValid {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(.green)
-            } else {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(.orange)
+            // 时间和百分比
+            VStack(alignment: .trailing, spacing: 2) {
+                Text(formatTime(distribution.usageTime))
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                
+                Text("\(Int(percentage))%")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(Color(.systemBackground))
-        .cornerRadius(8)
+        .padding(.horizontal, 4)
+    }
+    
+    private var tagColor: Color {
+        // 根据标签类型返回不同颜色
+        switch distribution.tagName {
+        case "工作":
+            return .blue
+        case "学习":
+            return .green
+        case "娱乐":
+            return .orange
+        case "社交":
+            return .pink
+        case "健康":
+            return .red
+        case "购物":
+            return .purple
+        case "出行":
+            return .cyan
+        default:
+            return .gray
+        }
+    }
+    
+    private var percentage: Double {
+        guard totalTime > 0 else { return 0 }
+        return (distribution.usageTime / totalTime) * 100
     }
     
     private func formatTime(_ timeInterval: TimeInterval) -> String {
@@ -475,126 +332,145 @@ struct SessionRowView: View {
             return "\(minutes)m"
         }
     }
-    
-    private func formatDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .short
-        formatter.timeStyle = .short
-        formatter.locale = Locale(identifier: "zh_CN")
-        return formatter.string(from: date)
-    }
 }
 
-// MARK: - New Card Views for Extended Functionality
 
-// MARK: - Time Usage Ring Card
-extension HomeView {
-    @ViewBuilder
-    private func TimeUsageRingCard() -> some View {
-        VStack(spacing: 20) {
+
+// MARK: - Time Insights Card
+struct TimeInsightsCard: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    @EnvironmentObject private var focusManager: FocusManager
+    @State private var insights: [TimeInsight] = []
+    
+    var body: some View {
+        VStack(spacing: 16) {
             HStack {
-                Text("时间使用分布")
-                    .font(.headline)
-                    .foregroundColor(.secondary)
+                Text("时间洞察")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
                 Spacer()
             }
             
-            TimeUsageRingView(
-                totalTime: todaysUsageTime,
-                sceneBreakdown: todaysTagDistribution,
-                goal: 8 * 3600 // 8 hours default goal
-            )
+            if insights.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "lightbulb")
+                        .font(.system(size: 40))
+                        .foregroundColor(.secondary)
+                    
+                    Text("继续使用以获得时间洞察")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.vertical, 20)
+            } else {
+                VStack(spacing: 12) {
+                    ForEach(insights, id: \.id) { insight in
+                        InsightRow(insight: insight)
+                    }
+                }
+            }
         }
         .padding()
         .background(Color(.systemGray6))
-        .cornerRadius(12)
+        .cornerRadius(16)
+        .onAppear {
+            generateInsights()
+        }
     }
     
-    @ViewBuilder
-    private func AppBreakdownCard() -> some View {
-        AppBreakdownView(
-            appUsageData: getAppUsageData(),
-            totalTime: todaysUsageTime
-        )
-    }
-    
-    @ViewBuilder
-    private func SceneTagSummaryCard() -> some View {
-        SceneTagSummaryView(
-            tagDistribution: todaysTagDistribution,
-            totalTime: todaysUsageTime
-        )
-    }
-    
-    // Helper function to get app usage data
-    private func getAppUsageData() -> [AppUsageBreakdownData] {
-        let calendar = Calendar.current
-        let startOfDay = calendar.startOfDay(for: Date())
-        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+    private func generateInsights() {
+        // 生成基于专注时间的简单洞察
+        var newInsights: [TimeInsight] = []
         
-        let request: NSFetchRequest<AppUsageSession> = AppUsageSession.fetchRequest()
-        request.predicate = NSPredicate(
-            format: "startTime >= %@ AND startTime < %@",
-            startOfDay as NSDate, endOfDay as NSDate
-        )
+        // 获取今日专注时间
+        let todaysFocusTime = focusManager.todaysFocusTime
+        let hours = Int(todaysFocusTime) / 3600
+        let minutes = Int(todaysFocusTime.truncatingRemainder(dividingBy: 3600)) / 60
         
-        do {
-            let sessions = try viewContext.fetch(request)
-            let totalTime = sessions.reduce(0) { $0 + $1.duration }
-            
-            // Group sessions by app
-            let groupedSessions = Dictionary(grouping: sessions) { $0.appIdentifier }
-            
-            var appUsageData: [AppUsageBreakdownData] = []
-            
-            for (appId, appSessions) in groupedSessions {
-                let appTime = appSessions.reduce(0) { $0 + $1.duration }
-                let percentage = totalTime > 0 ? (appTime / totalTime) * 100 : 0
-                let appName = appSessions.first?.appName ?? appId
-                
-                appUsageData.append(AppUsageBreakdownData(
-                    appName: appName,
-                    appIdentifier: appId,
-                    usageTime: appTime,
-                    percentage: percentage,
-                    sessionCount: appSessions.count,
-                    iconName: getIconName(for: appId)
+        if todaysFocusTime > 0 {
+            if hours > 0 {
+                newInsights.append(TimeInsight(
+                    id: "focus_time",
+                    icon: "brain.head.profile",
+                    title: "今日已专注 \(hours) 小时 \(minutes) 分钟",
+                    description: "保持专注，继续加油！",
+                    color: .green
+                ))
+            } else if minutes > 0 {
+                newInsights.append(TimeInsight(
+                    id: "focus_time",
+                    icon: "brain.head.profile",
+                    title: "今日已专注 \(minutes) 分钟",
+                    description: "良好的开始！",
+                    color: .green
                 ))
             }
-            
-            return appUsageData.sorted { $0.usageTime > $1.usageTime }
-        } catch {
-            print("Error fetching app usage data: \(error)")
-            return []
+        } else {
+            newInsights.append(TimeInsight(
+                id: "no_focus",
+                icon: "target",
+                title: "今日还未开始专注",
+                description: "开始您的第一个专注时段吧",
+                color: .blue
+            ))
         }
-    }
-    
-    // Helper function to get icon name for app
-    private func getIconName(for appIdentifier: String) -> String {
-        switch appIdentifier {
-        case let id where id.contains("wechat") || id.contains("tencent.xin"):
-            return "message.fill"
-        case let id where id.contains("safari"):
-            return "safari.fill"
-        case let id where id.contains("mail"):
-            return "envelope.fill"
-        case let id where id.contains("music"):
-            return "music.note"
-        case let id where id.contains("video") || id.contains("netflix"):
-            return "play.rectangle.fill"
-        case let id where id.contains("game"):
-            return "gamecontroller.fill"
-        case let id where id.contains("map"):
-            return "map.fill"
-        case let id where id.contains("camera"):
-            return "camera.fill"
-        case let id where id.contains("photo"):
-            return "photo.fill"
-        default:
-            return "app.fill"
+        
+        // 获取本周专注统计
+        let weeklyData = focusManager.getWeeklyTrend()
+        let weeklyTotal = weeklyData.reduce(0) { $0 + $1.totalFocusTime }
+        let weeklyHours = Int(weeklyTotal) / 3600
+        
+        if weeklyHours > 0 {
+            newInsights.append(TimeInsight(
+                id: "weekly_focus",
+                icon: "calendar",
+                title: "本周已专注 \(weeklyHours) 小时",
+                description: "专注习惯正在养成",
+                color: .orange
+            ))
         }
+        
+        insights = newInsights
     }
 }
+
+struct TimeInsight {
+    let id: String
+    let icon: String
+    let title: String
+    let description: String
+    let color: Color
+}
+
+struct InsightRow: View {
+    let insight: TimeInsight
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: insight.icon)
+                .font(.title2)
+                .foregroundColor(insight.color)
+                .frame(width: 24)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(insight.title)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(.primary)
+                
+                Text(insight.description)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+        }
+        .padding(.horizontal, 4)
+    }
+}
+
+
 
 // 测试代码已移至FocusTrackerTests目标
 

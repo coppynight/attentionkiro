@@ -37,50 +37,20 @@ struct StatisticsView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: 24) {
-                    // NEW: Weekly trend chart (enhanced with usage data)
-                    WeeklyTrendChart(
-                        weeklyData: timeAnalysisManager.weeklyTrend,
-                        showFocusData: true
-                    )
+                VStack(spacing: 20) {
+                    // 专注时间趋势
+                    FocusTimeTrendView()
                     
-                    // NEW: App usage ranking
-                    AppUsageRankingView(
-                        appUsageData: timeAnalysisManager.todaysAppBreakdown,
-                        totalTime: timeAnalysisManager.todaysUsageTime,
-                        showExtendedStats: true
-                    )
+                    // 标签使用分析
+                    TagUsageAnalysisView()
                     
-                    // NEW: Scene tag analysis
-                    SceneTagAnalysisView(
-                        tagDistribution: timeAnalysisManager.todaysTagDistribution,
-                        totalTime: timeAnalysisManager.todaysUsageTime,
-                        showTrends: true
-                    )
-                    
-                    // EXISTING: Weekly trend chart (original focus data)
-                    WeeklyTrendChartView()
-                    
-                    // EXISTING: Personal best record
-                    PersonalBestView(personalBest: personalBestRecord)
-                    
-                    // EXISTING: Focus sessions history
-                    FocusSessionsHistoryView()
+                    // 专注时间统计
+                    FocusTimeStatsView()
                 }
                 .padding()
             }
-            .navigationTitle("专注统计")
+            .navigationTitle("时间分析")
             .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Picker("时间范围", selection: $selectedTimeRange) {
-                        ForEach(TimeRange.allCases) { range in
-                            Text(range.rawValue).tag(range)
-                        }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                }
-            }
         }
         .onAppear {
             loadPersonalBestRecord()
@@ -105,80 +75,85 @@ struct StatisticsView: View {
     }
 }
 
-// MARK: - Weekly Trend Chart View
-struct WeeklyTrendChartView: View {
+// MARK: - Focus Time Trend View
+struct FocusTimeTrendView: View {
     @EnvironmentObject private var focusManager: FocusManager
     @State private var weeklyData: [DailyFocusData] = []
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("专注趋势")
-                .font(.headline)
-                .foregroundColor(.secondary)
+            Text("7天专注趋势")
+                .font(.title2)
+                .fontWeight(.semibold)
+                .foregroundColor(.primary)
             
-            // 使用简单的条形图实现，兼容所有iOS版本
-            HStack(alignment: .bottom, spacing: 8) {
-                ForEach(weeklyData, id: \.date) { day in
-                    VStack {
-                        // Bar
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(
-                                LinearGradient(
-                                    colors: [.blue, .cyan],
-                                    startPoint: .bottom,
-                                    endPoint: .top
-                                )
-                            )
-                            .frame(height: calculateBarHeight(day.totalFocusTime))
-                        
-                        // Day label
-                        Text(formatDayOfWeek(day.date))
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(maxWidth: .infinity)
+            if weeklyData.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "chart.bar")
+                        .font(.system(size: 40))
+                        .foregroundColor(.secondary)
+                    
+                    Text("暂无足够数据显示趋势")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
                 }
-            }
-            .frame(height: 200)
-            .padding(.top, 20)
-            
-            // Legend
-            HStack {
-                Circle()
-                    .fill(Color.blue)
-                    .frame(width: 10, height: 10)
+                .frame(height: 120)
+                .frame(maxWidth: .infinity)
+            } else {
+                // 简化的条形图
+                HStack(alignment: .bottom, spacing: 8) {
+                    ForEach(weeklyData, id: \.date) { day in
+                        VStack(spacing: 4) {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(Color.green)
+                                .frame(height: calculateBarHeight(day.totalFocusTime))
+                            
+                            Text(formatDayOfWeek(day.date))
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                }
+                .frame(height: 100)
                 
-                Text("专注时间")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                
-                Spacer()
-                
-                Text("总计: \(formatTotalTime(totalFocusTime))")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                HStack {
+                    Text("平均每日: \(formatTime(averageDailyTime))")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    Spacer()
+                    
+                    Text("本周总计: \(formatTime(totalWeeklyTime))")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
         }
         .padding()
         .background(Color(.systemGray6))
-        .cornerRadius(12)
+        .cornerRadius(16)
         .onAppear {
-            weeklyData = focusManager.getWeeklyTrend()
+            loadWeeklyData()
         }
     }
     
-    private var totalFocusTime: TimeInterval {
+    private var averageDailyTime: TimeInterval {
+        guard !weeklyData.isEmpty else { return 0 }
+        return weeklyData.reduce(0) { $0 + $1.totalFocusTime } / Double(weeklyData.count)
+    }
+    
+    private var totalWeeklyTime: TimeInterval {
         weeklyData.reduce(0) { $0 + $1.totalFocusTime }
     }
     
     private func calculateBarHeight(_ duration: TimeInterval) -> CGFloat {
-        let maxHeight: CGFloat = 160
-        let maxHours: Double = 8 // Assuming 8 hours is the max
-        
-        let hours = duration / 3600
-        let ratio = min(hours / maxHours, 1.0)
-        
-        return max(maxHeight * CGFloat(ratio), 10) // Minimum height of 10
+        let maxHeight: CGFloat = 80
+        guard !weeklyData.isEmpty else { return 4 }
+        let maxTime = weeklyData.max(by: { $0.totalFocusTime < $1.totalFocusTime })?.totalFocusTime ?? 1
+        guard maxTime > 0 else { return 4 }
+        let ratio = duration / maxTime
+        return max(maxHeight * CGFloat(ratio), 4)
     }
     
     private func formatDayOfWeek(_ date: Date) -> String {
@@ -188,71 +163,166 @@ struct WeeklyTrendChartView: View {
         return formatter.string(from: date)
     }
     
-    private func formatTotalTime(_ timeInterval: TimeInterval) -> String {
+    private func formatTime(_ timeInterval: TimeInterval) -> String {
         let hours = Int(timeInterval) / 3600
         let minutes = Int(timeInterval.truncatingRemainder(dividingBy: 3600)) / 60
         
         if hours > 0 {
-            return "\(hours)小时 \(minutes)分钟"
+            return "\(hours)h \(minutes)m"
         } else {
-            return "\(minutes)分钟"
+            return "\(minutes)m"
         }
+    }
+    
+    private func loadWeeklyData() {
+        weeklyData = focusManager.getWeeklyTrend()
     }
 }
 
-// MARK: - Personal Best View
-struct PersonalBestView: View {
-    var personalBest: (duration: TimeInterval, date: Date)?
+// 使用TimeAnalysisManager中的DailyUsageData
+
+// MARK: - Tag Usage Analysis View
+struct TagUsageAnalysisView: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    @StateObject private var tagManager: TagManager
+    @State private var weeklyTagData: [WeeklyTagData] = []
+    
+    init() {
+        let context = PersistenceController.shared.container.viewContext
+        self._tagManager = StateObject(wrappedValue: TagManager(viewContext: context))
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("个人最佳记录")
-                .font(.headline)
-                .foregroundColor(.secondary)
+            Text("标签使用分析")
+                .font(.title2)
+                .fontWeight(.semibold)
+                .foregroundColor(.primary)
             
-            if let bestRecord = personalBest {
-                HStack(spacing: 20) {
-                    // Trophy icon
-                    ZStack {
-                        Circle()
-                            .fill(Color.yellow.opacity(0.2))
-                            .frame(width: 60, height: 60)
-                        
-                        Image(systemName: "trophy.fill")
-                            .font(.title)
-                            .foregroundColor(.yellow)
-                    }
+            if weeklyTagData.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "tag")
+                        .font(.system(size: 40))
+                        .foregroundColor(.secondary)
                     
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(formatTime(bestRecord.duration))
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.primary)
-                        
-                        Text("创建于 \(formatDate(bestRecord.date))")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    Spacer()
+                    Text("暂无标签使用数据")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
                 }
+                .padding(.vertical, 20)
             } else {
-                HStack {
-                    Image(systemName: "hourglass")
-                        .foregroundColor(.secondary)
-                    
-                    Text("暂无专注记录")
-                        .foregroundColor(.secondary)
-                        .italic()
-                    
-                    Spacer()
+                VStack(spacing: 12) {
+                    ForEach(weeklyTagData.prefix(5), id: \.tagName) { tagData in
+                        WeeklyTagRow(tagData: tagData)
+                    }
                 }
-                .padding(.vertical, 10)
             }
         }
         .padding()
         .background(Color(.systemGray6))
-        .cornerRadius(12)
+        .cornerRadius(16)
+        .onAppear {
+            loadWeeklyTagData()
+        }
+    }
+    
+    private func loadWeeklyTagData() {
+        let calendar = Calendar.current
+        let today = Date()
+        
+        // 获取本周的标签分布数据
+        var tagTotals: [String: TimeInterval] = [:]
+        var tagCounts: [String: Int] = [:]
+        
+        for i in 0..<7 {
+            let date = calendar.date(byAdding: .day, value: -i, to: today)!
+            let dayDistribution = tagManager.getTagDistribution(for: date)
+            
+            for distribution in dayDistribution {
+                let tagName = distribution.tagName
+                tagTotals[tagName, default: 0] += distribution.usageTime
+                tagCounts[tagName, default: 0] += distribution.sessionCount
+            }
+        }
+        
+        // 转换为WeeklyTagData数组并排序
+        weeklyTagData = tagTotals.map { (tagName, totalTime) in
+            WeeklyTagData(
+                tagName: tagName,
+                totalTime: totalTime,
+                sessionCount: tagCounts[tagName] ?? 0,
+                averageDailyTime: totalTime / 7
+            )
+        }.sorted { $0.totalTime > $1.totalTime }
+    }
+}
+
+struct WeeklyTagData {
+    let tagName: String
+    let totalTime: TimeInterval
+    let sessionCount: Int
+    let averageDailyTime: TimeInterval
+}
+
+struct WeeklyTagRow: View {
+    let tagData: WeeklyTagData
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            // 标签颜色指示器
+            Circle()
+                .fill(tagColor)
+                .frame(width: 12, height: 12)
+            
+            // 标签信息
+            VStack(alignment: .leading, spacing: 2) {
+                Text(tagData.tagName)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundColor(.primary)
+                
+                Text("平均每日 \(formatTime(tagData.averageDailyTime))")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+            
+            // 本周总时间
+            VStack(alignment: .trailing, spacing: 2) {
+                Text(formatTime(tagData.totalTime))
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                
+                Text("\(tagData.sessionCount) 次")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(.horizontal, 4)
+    }
+    
+    private var tagColor: Color {
+        // 根据标签类型返回不同颜色
+        switch tagData.tagName {
+        case "工作":
+            return .blue
+        case "学习":
+            return .green
+        case "娱乐":
+            return .orange
+        case "社交":
+            return .pink
+        case "健康":
+            return .red
+        case "购物":
+            return .purple
+        case "出行":
+            return .cyan
+        default:
+            return .gray
+        }
     }
     
     private func formatTime(_ timeInterval: TimeInterval) -> String {
@@ -260,148 +330,131 @@ struct PersonalBestView: View {
         let minutes = Int(timeInterval.truncatingRemainder(dividingBy: 3600)) / 60
         
         if hours > 0 {
-            return "\(hours)小时 \(minutes)分钟"
+            return "\(hours)h \(minutes)m"
         } else {
-            return "\(minutes)分钟"
+            return "\(minutes)m"
         }
-    }
-    
-    private func formatDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        formatter.locale = Locale(identifier: "zh_CN")
-        return formatter.string(from: date)
     }
 }
 
-// MARK: - Focus Sessions History View
-struct FocusSessionsHistoryView: View {
-    @Environment(\.managedObjectContext) private var viewContext
-    
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \FocusSession.startTime, ascending: false)],
-        predicate: NSPredicate(format: "isValid == YES"),
-        animation: .default)
-    private var focusSessions: FetchedResults<FocusSession>
+// 移除了应用使用相关功能
+
+// MARK: - Focus Time Stats View
+struct FocusTimeStatsView: View {
+    @EnvironmentObject private var focusManager: FocusManager
+    @State private var personalBest: (duration: TimeInterval, date: Date)?
+    @State private var weeklyFocusTime: TimeInterval = 0
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                Text("专注时段历史")
-                    .font(.headline)
-                    .foregroundColor(.secondary)
-                
-                Spacer()
-                
-                Text("\(focusSessions.count)个记录")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
+            Text("专注时间统计")
+                .font(.title2)
+                .fontWeight(.semibold)
+                .foregroundColor(.primary)
             
-            if focusSessions.isEmpty {
-                Text("暂无专注记录")
-                    .foregroundColor(.secondary)
-                    .italic()
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.vertical, 20)
-            } else {
-                LazyVStack(spacing: 12) {
-                    ForEach(Array(focusSessions.prefix(15)), id: \.objectID) { session in
-                        DetailedSessionRowView(session: session)
-                    }
+            VStack(spacing: 12) {
+                // 今日专注时间
+                HStack {
+                    Image(systemName: "brain.head.profile")
+                        .font(.title2)
+                        .foregroundColor(.green)
+                        .frame(width: 24)
+                    
+                    Text("今日专注")
+                        .font(.subheadline)
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                    
+                    Text(formatTime(focusManager.todaysFocusTime))
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.green)
                 }
                 
-                if focusSessions.count > 15 {
-                    Button(action: {
-                        // Action to view all sessions would go here
-                    }) {
-                        Text("查看全部记录")
+                // 本周专注时间
+                HStack {
+                    Image(systemName: "calendar.badge.clock")
+                        .font(.title2)
+                        .foregroundColor(.blue)
+                        .frame(width: 24)
+                    
+                    Text("本周专注")
+                        .font(.subheadline)
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                    
+                    Text(formatTime(weeklyFocusTime))
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.blue)
+                }
+                
+                // 个人最佳记录
+                if let best = personalBest {
+                    HStack {
+                        Image(systemName: "trophy.fill")
+                            .font(.title2)
+                            .foregroundColor(.orange)
+                            .frame(width: 24)
+                        
+                        Text("最佳记录")
                             .font(.subheadline)
-                            .foregroundColor(.blue)
-                            .padding(.vertical, 8)
-                            .frame(maxWidth: .infinity)
+                            .foregroundColor(.primary)
+                        
+                        Spacer()
+                        
+                        Text(formatTime(best.duration))
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.orange)
                     }
                 }
             }
         }
         .padding()
         .background(Color(.systemGray6))
-        .cornerRadius(12)
-    }
-}
-
-// MARK: - Detailed Session Row View
-struct DetailedSessionRowView: View {
-    let session: FocusSession
-    
-    var body: some View {
-        HStack {
-            // Date column
-            VStack(alignment: .leading, spacing: 4) {
-                Text(formatDate(session.startTime))
-                    .font(.subheadline)
-                    .foregroundColor(.primary)
-                
-                Text(formatTime(session.startTime))
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            .frame(width: 100, alignment: .leading)
-            
-            Divider()
-                .padding(.horizontal, 8)
-            
-            // Duration column
-            VStack(alignment: .leading, spacing: 4) {
-                Text(formatDuration(session.duration))
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                
-                if let endTime = session.endTime {
-                    Text("结束于 \(formatTime(endTime))")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-            }
-            
-            Spacer()
-            
-            // Status indicator
-            Image(systemName: "checkmark.circle.fill")
-                .foregroundColor(.green)
+        .cornerRadius(16)
+        .onAppear {
+            loadFocusStats()
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
-        .background(Color(.systemBackground))
-        .cornerRadius(8)
     }
     
-    private func formatDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MM月dd日"
-        formatter.locale = Locale(identifier: "zh_CN")
-        return formatter.string(from: date)
+    private func loadFocusStats() {
+        // 加载本周专注时间
+        let weeklyData = focusManager.getWeeklyTrend()
+        weeklyFocusTime = weeklyData.reduce(0) { $0 + $1.totalFocusTime }
+        
+        // 加载个人最佳记录
+        let request: NSFetchRequest<FocusSession> = FocusSession.fetchRequest()
+        request.predicate = NSPredicate(format: "isValid == YES")
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \FocusSession.duration, ascending: false)]
+        request.fetchLimit = 1
+        
+        do {
+            let results = try PersistenceController.shared.container.viewContext.fetch(request)
+            if let bestSession = results.first {
+                personalBest = (bestSession.duration, bestSession.startTime)
+            }
+        } catch {
+            print("Error fetching personal best record: \(error)")
+        }
     }
     
-    private func formatTime(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        formatter.locale = Locale(identifier: "zh_CN")
-        return formatter.string(from: date)
-    }
-    
-    private func formatDuration(_ timeInterval: TimeInterval) -> String {
+    private func formatTime(_ timeInterval: TimeInterval) -> String {
         let hours = Int(timeInterval) / 3600
         let minutes = Int(timeInterval.truncatingRemainder(dividingBy: 3600)) / 60
         
         if hours > 0 {
-            return "\(hours)小时 \(minutes)分钟"
+            return "\(hours)h \(minutes)m"
         } else {
-            return "\(minutes)分钟"
+            return "\(minutes)m"
         }
     }
 }
+
+
 
 struct StatisticsView_Previews: PreviewProvider {
     static var previews: some View {

@@ -48,6 +48,7 @@
 		A2110D692E334E590066190A /* ErrorAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D682E334E590066190A /* ErrorAlertView.swift */; };
 		A2110D6B2E334EA40066190A /* FeatureHighlightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D6A2E334EA40066190A /* FeatureHighlightView.swift */; };
 		A2110D782E336AF50066190A /* NotificationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D772E336AF50066190A /* NotificationDelegate.swift */; };
+		A2110D7A2E33F2A80066190A /* TagManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D792E33F2A80066190A /* TagManagementView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -113,6 +114,7 @@
 		A2110D682E334E590066190A /* ErrorAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorAlertView.swift; sourceTree = "<group>"; };
 		A2110D6A2E334EA40066190A /* FeatureHighlightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureHighlightView.swift; sourceTree = "<group>"; };
 		A2110D772E336AF50066190A /* NotificationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDelegate.swift; sourceTree = "<group>"; };
+		A2110D792E33F2A80066190A /* TagManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagManagementView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -225,6 +227,7 @@
 		A2110CC72E302FA40066190A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A2110D792E33F2A80066190A /* TagManagementView.swift */,
 				A2110D642E334E3F0066190A /* Onboarding */,
 				A2110D522E3295990066190A /* TagsView.swift */,
 				A2110D422E32883C0066190A /* TagSelectionView.swift */,
@@ -416,6 +419,7 @@
 				A2110D672E334E500066190A /* OnboardingView.swift in Sources */,
 				A2110D412E3288340066190A /* TagSelectorComponent.swift in Sources */,
 				A2110CFD2E30E8210066190A /* TestView.swift in Sources */,
+				A2110D7A2E33F2A80066190A /* TagManagementView.swift in Sources */,
 				A2110CC32E3025E90066190A /* UsageMonitor.swift in Sources */,
 				A2110CC42E3025E90066190A /* FocusManager.swift in Sources */,
 				A1000018 /* FocusSession+CoreDataProperties.swift in Sources */,

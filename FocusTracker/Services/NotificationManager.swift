@@ -73,8 +73,8 @@ class NotificationManager: ObservableObject {
         notificationCenter.removePendingNotificationRequests(withIdentifiers: [dailySummaryIdentifier])
         
         let content = UNMutableNotificationContent()
-        content.title = "今日专注总结"
-        content.body = "查看你今天的专注成果！"
+        content.title = "今日时间总结"
+        content.body = "了解你今天的时间使用情况"
         content.sound = .default
         content.categoryIdentifier = "DAILY_SUMMARY"
         content.userInfo = ["type": "scheduled_daily_summary"]
@@ -105,7 +105,7 @@ class NotificationManager: ObservableObject {
         guard isAuthorized else { return }
         
         let content = UNMutableNotificationContent()
-        content.title = "专注鼓励"
+        content.title = "时间管理提醒"
         content.body = message
         content.sound = .default
         content.categoryIdentifier = "ENCOURAGEMENT"
@@ -132,8 +132,8 @@ class NotificationManager: ObservableObject {
         let focusMinutes = Int((focusTime.truncatingRemainder(dividingBy: 3600)) / 60)
         
         let content = UNMutableNotificationContent()
-        content.title = "🎉 目标达成！"
-        content.body = "恭喜！你今天已专注 \(focusHours)小时\(focusMinutes)分钟，达成了每日目标！"
+        content.title = "🎉 专注目标达成！"
+        content.body = "很棒！你今天专注了 \(focusHours)小时\(focusMinutes)分钟，达成了专注目标！"
         content.sound = .default
         content.categoryIdentifier = "GOAL_ACHIEVED"
         
@@ -163,16 +163,16 @@ class NotificationManager: ObservableObject {
         let longestMinutes = Int((longestSession.truncatingRemainder(dividingBy: 3600)) / 60)
         
         let content = UNMutableNotificationContent()
-        content.title = "今日专注总结"
+        content.title = "今日时间总结"
         
         if focusTime > 0 {
             let goalAchieved = focusTime >= goalTime
             let goalEmoji = goalAchieved ? "🎉 " : ""
-            let goalText = goalAchieved ? "，已达成目标！" : ""
+            let goalText = goalAchieved ? "，达成了专注目标！" : ""
             
-            content.body = "\(goalEmoji)今天专注了 \(focusHours)小时\(focusMinutes)分钟，共 \(sessionsCount) 个专注时段。最长专注 \(longestHours)小时\(longestMinutes)分钟\(goalText)"
+            content.body = "\(goalEmoji)今天专注了 \(focusHours)小时\(focusMinutes)分钟，共 \(sessionsCount) 个时段。最长专注 \(longestHours)小时\(longestMinutes)分钟\(goalText)"
         } else {
-            content.body = "今天还没有专注时段，明天继续加油！"
+            content.body = "今天还没有记录到专注时间，明天开始关注你的时间使用吧！"
         }
         
         content.sound = .default
@@ -201,7 +201,7 @@ class NotificationManager: ObservableObject {
         
         let content = UNMutableNotificationContent()
         content.title = "🔥 连续达标！"
-        content.body = "太棒了！你已经连续 \(streakDays) 天达成专注目标，保持这个节奏！"
+        content.body = "很棒！你已经连续 \(streakDays) 天达成专注目标，时间管理习惯正在养成！"
         content.sound = .default
         content.categoryIdentifier = "STREAK_ACHIEVED"
         content.userInfo = ["type": "streak_achieved", "streak_days": streakDays]
@@ -227,8 +227,8 @@ class NotificationManager: ObservableObject {
         let declinePercentage = Int(((yesterdayTime - todayTime) / yesterdayTime) * 100)
         
         let content = UNMutableNotificationContent()
-        content.title = "💪 继续加油"
-        content.body = "今天的专注时间比昨天减少了 \(declinePercentage)%，没关系，明天我们可以做得更好！"
+        content.title = "💪 时间管理提醒"
+        content.body = "今天的专注时间比昨天减少了 \(declinePercentage)%，了解时间使用模式有助于更好的时间管理。"
         content.sound = .default
         content.categoryIdentifier = "DECLINE_WARNING"
         content.userInfo = ["type": "decline_warning", "decline_percentage": declinePercentage]

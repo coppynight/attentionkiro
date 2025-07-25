@@ -62,6 +62,19 @@ struct SettingsView: View {
         NavigationView {
             Form {
                 Section {
+                    NavigationLink(destination: TagManagementView()) {
+                        HStack {
+                            Image(systemName: "tag.fill")
+                                .foregroundColor(.purple)
+                                .frame(width: 24)
+                            
+                            Text("标签管理")
+                                .foregroundColor(.primary)
+                            
+                            Spacer()
+                        }
+                    }
+                    
                     Button(action: {
                         showingGoalPicker = true
                     }) {
@@ -268,7 +281,7 @@ struct SettingsView: View {
                 } header: {
                     Text("通知设置")
                 } footer: {
-                    Text("每日晚上9点发送专注时间总结通知，包括今日专注时长和鼓励信息。还会在达成目标、连续达标和专注下降时发送智能提醒。")
+                    Text("每日晚上9点发送时间使用总结通知，帮助你了解今日的时间分配情况。还会在达成专注目标、保持良好习惯时发送鼓励提醒。")
                 }
                 
                 Section {
