@@ -4,11 +4,32 @@ import CoreData
 struct HomeView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var focusManager: FocusManager
+    @StateObject private var tagManager: TagManager
+    @StateObject private var timeAnalysisManager: TimeAnalysisManager
+    @State private var todaysUsageTime: TimeInterval = 0
+    @State private var todaysTagDistribution: [TagDistribution] = []
     
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \FocusSession.startTime, ascending: false)],
         animation: .default)
     private var focusSessions: FetchedResults<FocusSession>
+    
+    init() {
+        let context = PersistenceController.shared.container.viewContext
+        self._tagManager = StateObject(wrappedValue: TagManager(viewContext: context))
+        
+        // Initialize TimeAnalysisManager with dependencies
+        let focusManager = FocusManager(
+            usageMonitor: UsageMonitor(),
+            viewContext: context
+        )
+        let tagManager = TagManager(viewContext: context)
+        self._timeAnalysisManager = StateObject(wrappedValue: TimeAnalysisManager(
+            viewContext: context,
+            focusManager: focusManager,
+            tagManager: tagManager
+        ))
+    }
 
     var body: some View {
         NavigationView {
@@ -22,10 +43,19 @@ struct HomeView: View {
                         CurrentSessionCard()
                     }
                     
-                    // Today's Focus Time Card
+                    // Today's Focus Time Card (existing)
                     TodaysFocusCard()
                     
-                    // Recent Sessions Card
+                    // NEW: Time Usage Ring View (shows app usage distribution)
+                    TimeUsageRingCard()
+                    
+                    // NEW: App Breakdown View
+                    AppBreakdownCard()
+                    
+                    // NEW: Scene Tag Summary View
+                    SceneTagSummaryCard()
+                    
+                    // Recent Sessions Card (existing)
                     RecentSessionsCard()
                     
                     // 开发测试按钮已移至测试目标
@@ -35,6 +65,17 @@ struct HomeView: View {
             .navigationTitle("专注追踪")
             .navigationBarTitleDisplayMode(.large)
         }
+        .onAppear {
+            timeAnalysisManager.startMonitoring()
+            updateTodaysData()
+        }
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func updateTodaysData() {
+        todaysUsageTime = timeAnalysisManager.todaysUsageTime
+        todaysTagDistribution = tagManager.getTagDistribution(for: Date())
     }
 }
 
@@ -444,15 +485,129 @@ struct SessionRowView: View {
     }
 }
 
+// MARK: - New Card Views for Extended Functionality
+
+// MARK: - Time Usage Ring Card
+extension HomeView {
+    @ViewBuilder
+    private func TimeUsageRingCard() -> some View {
+        VStack(spacing: 20) {
+            HStack {
+                Text("时间使用分布")
+                    .font(.headline)
+                    .foregroundColor(.secondary)
+                Spacer()
+            }
+            
+            TimeUsageRingView(
+                totalTime: todaysUsageTime,
+                sceneBreakdown: todaysTagDistribution,
+                goal: 8 * 3600 // 8 hours default goal
+            )
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .cornerRadius(12)
+    }
+    
+    @ViewBuilder
+    private func AppBreakdownCard() -> some View {
+        AppBreakdownView(
+            appUsageData: getAppUsageData(),
+            totalTime: todaysUsageTime
+        )
+    }
+    
+    @ViewBuilder
+    private func SceneTagSummaryCard() -> some View {
+        SceneTagSummaryView(
+            tagDistribution: todaysTagDistribution,
+            totalTime: todaysUsageTime
+        )
+    }
+    
+    // Helper function to get app usage data
+    private func getAppUsageData() -> [AppUsageBreakdownData] {
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: Date())
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+        
+        let request: NSFetchRequest<AppUsageSession> = AppUsageSession.fetchRequest()
+        request.predicate = NSPredicate(
+            format: "startTime >= %@ AND startTime < %@",
+            startOfDay as NSDate, endOfDay as NSDate
+        )
+        
+        do {
+            let sessions = try viewContext.fetch(request)
+            let totalTime = sessions.reduce(0) { $0 + $1.duration }
+            
+            // Group sessions by app
+            let groupedSessions = Dictionary(grouping: sessions) { $0.appIdentifier }
+            
+            var appUsageData: [AppUsageBreakdownData] = []
+            
+            for (appId, appSessions) in groupedSessions {
+                let appTime = appSessions.reduce(0) { $0 + $1.duration }
+                let percentage = totalTime > 0 ? (appTime / totalTime) * 100 : 0
+                let appName = appSessions.first?.appName ?? appId
+                
+                appUsageData.append(AppUsageBreakdownData(
+                    appName: appName,
+                    appIdentifier: appId,
+                    usageTime: appTime,
+                    percentage: percentage,
+                    sessionCount: appSessions.count,
+                    iconName: getIconName(for: appId)
+                ))
+            }
+            
+            return appUsageData.sorted { $0.usageTime > $1.usageTime }
+        } catch {
+            print("Error fetching app usage data: \(error)")
+            return []
+        }
+    }
+    
+    // Helper function to get icon name for app
+    private func getIconName(for appIdentifier: String) -> String {
+        switch appIdentifier {
+        case let id where id.contains("wechat") || id.contains("tencent.xin"):
+            return "message.fill"
+        case let id where id.contains("safari"):
+            return "safari.fill"
+        case let id where id.contains("mail"):
+            return "envelope.fill"
+        case let id where id.contains("music"):
+            return "music.note"
+        case let id where id.contains("video") || id.contains("netflix"):
+            return "play.rectangle.fill"
+        case let id where id.contains("game"):
+            return "gamecontroller.fill"
+        case let id where id.contains("map"):
+            return "map.fill"
+        case let id where id.contains("camera"):
+            return "camera.fill"
+        case let id where id.contains("photo"):
+            return "photo.fill"
+        default:
+            return "app.fill"
+        }
+    }
+}
+
 // 测试代码已移至FocusTrackerTests目标
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
+        let context = PersistenceController.preview.container.viewContext
+        let focusManager = FocusManager(
+            usageMonitor: UsageMonitor(),
+            viewContext: context
+        )
+        
         HomeView()
-            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-            .environmentObject(FocusManager(
-                usageMonitor: UsageMonitor(),
-                viewContext: PersistenceController.preview.container.viewContext
-            ))
+            .environment(\.managedObjectContext, context)
+            .environmentObject(focusManager)
     }
 }

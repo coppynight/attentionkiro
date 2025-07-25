@@ -72,36 +72,12 @@ class TestRunner {
             try testSuite.setUpWithError()
             
             // Run individual tests
-            results.add(runTest("Focus Session Validation - Valid Session") {
-                try testSuite.testFocusSessionValidation_ValidSession()
+            results.add(runTest("Add Focus Session") {
+                try testSuite.testAddFocusSession()
             })
             
-            results.add(runTest("Focus Session Validation - Too Short") {
-                try testSuite.testFocusSessionValidation_TooShort()
-            })
-            
-            results.add(runTest("Focus Session Validation - During Sleep Time") {
-                try testSuite.testFocusSessionValidation_DuringSleepTime()
-            })
-            
-            results.add(runTest("Get Focus Statistics - Empty Data") {
-                try testSuite.testGetFocusStatistics_EmptyData()
-            })
-            
-            results.add(runTest("Get Focus Statistics - With Valid Sessions") {
-                try testSuite.testGetFocusStatistics_WithValidSessions()
-            })
-            
-            results.add(runTest("Get Focus Statistics - Exclude Invalid Sessions") {
-                try testSuite.testGetFocusStatistics_ExcludeInvalidSessions()
-            })
-            
-            results.add(runTest("Get Weekly Trend - Returns Seven Days") {
-                try testSuite.testGetWeeklyTrend_ReturnsSevenDays()
-            })
-            
-            results.add(runTest("Start Stop Monitoring") {
-                try testSuite.testStartStopMonitoring()
+            results.add(runTest("Core Functionality") {
+                try testSuite.testCoreFunctionality()
             })
             
             try testSuite.tearDownWithError()

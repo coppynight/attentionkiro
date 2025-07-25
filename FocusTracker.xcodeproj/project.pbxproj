@@ -23,10 +23,8 @@
 		A2110CFC2E30E8210066190A /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CF92E30E8210066190A /* StatisticsView.swift */; };
 		A2110CFD2E30E8210066190A /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110CFA2E30E8210066190A /* TestView.swift */; };
 		A2110D1C2E30ED740066190A /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D1B2E30ED740066190A /* PersistenceController.swift */; };
-		A2110D2C2E3202C10066190A /* NotificationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D292E3202C10066190A /* NotificationDelegate.swift */; };
 		A2110D2D2E3202C10066190A /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D2A2E3202C10066190A /* NotificationManager.swift */; };
 		A2110D2E2E3202C10066190A /* NotificationManager+SmartNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D2B2E3202C10066190A /* NotificationManager+SmartNotifications.swift */; };
-		A2110D302E32727C0066190A /* NotificationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D2F2E32727C0066190A /* NotificationDelegate.swift */; };
 		A2110D362E3281FF0066190A /* AppUsageSession+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D322E3281FF0066190A /* AppUsageSession+CoreDataProperties.swift */; };
 		A2110D372E3281FF0066190A /* DataModelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D332E3281FF0066190A /* DataModelTest.swift */; };
 		A2110D382E3281FF0066190A /* SceneTag+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D342E3281FF0066190A /* SceneTag+CoreDataClass.swift */; };
@@ -37,6 +35,19 @@
 		A2110D412E3288340066190A /* TagSelectorComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D3F2E3288340066190A /* TagSelectorComponent.swift */; };
 		A2110D432E32883C0066190A /* TagSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D422E32883C0066190A /* TagSelectionView.swift */; };
 		A2110D452E328AF10066190A /* TimeAnalysisManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D442E328AF10066190A /* TimeAnalysisManager.swift */; };
+		A2110D492E32937C0066190A /* TimeUsageRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D482E32937C0066190A /* TimeUsageRingView.swift */; };
+		A2110D4A2E32937C0066190A /* SceneTagSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D472E32937C0066190A /* SceneTagSummaryView.swift */; };
+		A2110D4B2E32937C0066190A /* AppBreakdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D462E32937C0066190A /* AppBreakdownView.swift */; };
+		A2110D4E2E3294B90066190A /* AppUsageRankingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D4C2E3294B90066190A /* AppUsageRankingView.swift */; };
+		A2110D4F2E3294B90066190A /* WeeklyTrendChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D4D2E3294B90066190A /* WeeklyTrendChart.swift */; };
+		A2110D512E3294D20066190A /* SceneTagAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D502E3294D20066190A /* SceneTagAnalysisView.swift */; };
+		A2110D532E3295990066190A /* TagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D522E3295990066190A /* TagsView.swift */; };
+		A2110D622E334E2C0066190A /* ErrorHandlingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D612E334E2C0066190A /* ErrorHandlingService.swift */; };
+		A2110D652E334E3F0066190A /* OnboardingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D632E334E3F0066190A /* OnboardingCoordinator.swift */; };
+		A2110D672E334E500066190A /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D662E334E500066190A /* OnboardingView.swift */; };
+		A2110D692E334E590066190A /* ErrorAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D682E334E590066190A /* ErrorAlertView.swift */; };
+		A2110D6B2E334EA40066190A /* FeatureHighlightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D6A2E334EA40066190A /* FeatureHighlightView.swift */; };
+		A2110D782E336AF50066190A /* NotificationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2110D772E336AF50066190A /* NotificationDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,10 +88,8 @@
 		A2110CFA2E30E8210066190A /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
 		A2110D0E2E30EAFE0066190A /* FocusTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FocusTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2110D1B2E30ED740066190A /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
-		A2110D292E3202C10066190A /* NotificationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDelegate.swift; sourceTree = "<group>"; };
 		A2110D2A2E3202C10066190A /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		A2110D2B2E3202C10066190A /* NotificationManager+SmartNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationManager+SmartNotifications.swift"; sourceTree = "<group>"; };
-		A2110D2F2E32727C0066190A /* NotificationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDelegate.swift; sourceTree = "<group>"; };
 		A2110D312E3281FF0066190A /* AppUsageSession+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppUsageSession+CoreDataClass.swift"; sourceTree = "<group>"; };
 		A2110D322E3281FF0066190A /* AppUsageSession+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppUsageSession+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		A2110D332E3281FF0066190A /* DataModelTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelTest.swift; sourceTree = "<group>"; };
@@ -91,6 +100,19 @@
 		A2110D3F2E3288340066190A /* TagSelectorComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagSelectorComponent.swift; sourceTree = "<group>"; };
 		A2110D422E32883C0066190A /* TagSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagSelectionView.swift; sourceTree = "<group>"; };
 		A2110D442E328AF10066190A /* TimeAnalysisManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeAnalysisManager.swift; sourceTree = "<group>"; };
+		A2110D462E32937C0066190A /* AppBreakdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBreakdownView.swift; sourceTree = "<group>"; };
+		A2110D472E32937C0066190A /* SceneTagSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneTagSummaryView.swift; sourceTree = "<group>"; };
+		A2110D482E32937C0066190A /* TimeUsageRingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeUsageRingView.swift; sourceTree = "<group>"; };
+		A2110D4C2E3294B90066190A /* AppUsageRankingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUsageRankingView.swift; sourceTree = "<group>"; };
+		A2110D4D2E3294B90066190A /* WeeklyTrendChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyTrendChart.swift; sourceTree = "<group>"; };
+		A2110D502E3294D20066190A /* SceneTagAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneTagAnalysisView.swift; sourceTree = "<group>"; };
+		A2110D522E3295990066190A /* TagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsView.swift; sourceTree = "<group>"; };
+		A2110D612E334E2C0066190A /* ErrorHandlingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandlingService.swift; sourceTree = "<group>"; };
+		A2110D632E334E3F0066190A /* OnboardingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCoordinator.swift; sourceTree = "<group>"; };
+		A2110D662E334E500066190A /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		A2110D682E334E590066190A /* ErrorAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorAlertView.swift; sourceTree = "<group>"; };
+		A2110D6A2E334EA40066190A /* FeatureHighlightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureHighlightView.swift; sourceTree = "<group>"; };
+		A2110D772E336AF50066190A /* NotificationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -186,11 +208,11 @@
 		A2110CC22E3025E90066190A /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				A2110D772E336AF50066190A /* NotificationDelegate.swift */,
+				A2110D612E334E2C0066190A /* ErrorHandlingService.swift */,
 				A2110D442E328AF10066190A /* TimeAnalysisManager.swift */,
 				A2110D3D2E3287920066190A /* TagManager.swift */,
 				A2110D3B2E3285690066190A /* PermissionManager.swift */,
-				A2110D2F2E32727C0066190A /* NotificationDelegate.swift */,
-				A2110D292E3202C10066190A /* NotificationDelegate.swift */,
 				A2110D2A2E3202C10066190A /* NotificationManager.swift */,
 				A2110D2B2E3202C10066190A /* NotificationManager+SmartNotifications.swift */,
 				A2110D1B2E30ED740066190A /* PersistenceController.swift */,
@@ -203,6 +225,8 @@
 		A2110CC72E302FA40066190A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A2110D642E334E3F0066190A /* Onboarding */,
+				A2110D522E3295990066190A /* TagsView.swift */,
 				A2110D422E32883C0066190A /* TagSelectionView.swift */,
 				A2110D402E3288340066190A /* Components */,
 				A2110CF92E30E8210066190A /* StatisticsView.swift */,
@@ -216,9 +240,26 @@
 		A2110D402E3288340066190A /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				A2110D6A2E334EA40066190A /* FeatureHighlightView.swift */,
+				A2110D682E334E590066190A /* ErrorAlertView.swift */,
+				A2110D502E3294D20066190A /* SceneTagAnalysisView.swift */,
+				A2110D4C2E3294B90066190A /* AppUsageRankingView.swift */,
+				A2110D4D2E3294B90066190A /* WeeklyTrendChart.swift */,
+				A2110D462E32937C0066190A /* AppBreakdownView.swift */,
+				A2110D472E32937C0066190A /* SceneTagSummaryView.swift */,
+				A2110D482E32937C0066190A /* TimeUsageRingView.swift */,
 				A2110D3F2E3288340066190A /* TagSelectorComponent.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		A2110D642E334E3F0066190A /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				A2110D662E334E500066190A /* OnboardingView.swift */,
+				A2110D632E334E3F0066190A /* OnboardingCoordinator.swift */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -361,20 +402,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A2110D4E2E3294B90066190A /* AppUsageRankingView.swift in Sources */,
+				A2110D4F2E3294B90066190A /* WeeklyTrendChart.swift in Sources */,
+				A2110D512E3294D20066190A /* SceneTagAnalysisView.swift in Sources */,
 				A1000012 /* FocusSession+CoreDataClass.swift in Sources */,
-				A2110D2C2E3202C10066190A /* NotificationDelegate.swift in Sources */,
+				A2110D692E334E590066190A /* ErrorAlertView.swift in Sources */,
 				A2110D452E328AF10066190A /* TimeAnalysisManager.swift in Sources */,
 				A2110D3E2E3287920066190A /* TagManager.swift in Sources */,
+				A2110D782E336AF50066190A /* NotificationDelegate.swift in Sources */,
 				A2110D2D2E3202C10066190A /* NotificationManager.swift in Sources */,
-				A2110D302E32727C0066190A /* NotificationDelegate.swift in Sources */,
 				A2110D2E2E3202C10066190A /* NotificationManager+SmartNotifications.swift in Sources */,
 				A2110CFC2E30E8210066190A /* StatisticsView.swift in Sources */,
+				A2110D672E334E500066190A /* OnboardingView.swift in Sources */,
 				A2110D412E3288340066190A /* TagSelectorComponent.swift in Sources */,
 				A2110CFD2E30E8210066190A /* TestView.swift in Sources */,
 				A2110CC32E3025E90066190A /* UsageMonitor.swift in Sources */,
 				A2110CC42E3025E90066190A /* FocusManager.swift in Sources */,
 				A1000018 /* FocusSession+CoreDataProperties.swift in Sources */,
+				A2110D532E3295990066190A /* TagsView.swift in Sources */,
 				A1000014 /* UserSettings+CoreDataClass.swift in Sources */,
+				A2110D6B2E334EA40066190A /* FeatureHighlightView.swift in Sources */,
 				A2110CF02E309F020066190A /* FocusDataModel.xcdatamodeld in Sources */,
 				A2110D362E3281FF0066190A /* AppUsageSession+CoreDataProperties.swift in Sources */,
 				A2110D372E3281FF0066190A /* DataModelTest.swift in Sources */,
@@ -386,8 +433,13 @@
 				A1000020 /* UserSettings+CoreDataProperties.swift in Sources */,
 				A1000003 /* ContentView.swift in Sources */,
 				A2110CC82E302FA40066190A /* SettingsView.swift in Sources */,
+				A2110D622E334E2C0066190A /* ErrorHandlingService.swift in Sources */,
 				A2110CC92E302FA40066190A /* HomeView.swift in Sources */,
 				A2110D432E32883C0066190A /* TagSelectionView.swift in Sources */,
+				A2110D492E32937C0066190A /* TimeUsageRingView.swift in Sources */,
+				A2110D4A2E32937C0066190A /* SceneTagSummaryView.swift in Sources */,
+				A2110D652E334E3F0066190A /* OnboardingCoordinator.swift in Sources */,
+				A2110D4B2E32937C0066190A /* AppBreakdownView.swift in Sources */,
 				A1000001 /* FocusTrackerApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

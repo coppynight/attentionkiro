@@ -6,6 +6,7 @@ struct SettingsView: View {
     @EnvironmentObject private var notificationManager: NotificationManager
     @State private var userSettings: UserSettings?
     @State private var showingGoalPicker = false
+    @State private var showingUsageGoalPicker = false
     @State private var showingSleepTimePicker = false
     @State private var showingLunchTimePicker = false
     @State private var showingTimeZonePicker = false
@@ -13,6 +14,7 @@ struct SettingsView: View {
     
     // Temporary state for pickers
     @State private var tempDailyGoal: Double = 2.0 // hours
+    @State private var tempDailyUsageGoal: Double = 4.0 // hours
     @State private var tempSleepStart = Calendar.current.date(from: DateComponents(hour: 23, minute: 0)) ?? Date()
     @State private var tempSleepEnd = Calendar.current.date(from: DateComponents(hour: 7, minute: 0)) ?? Date()
     @State private var tempLunchStart = Calendar.current.date(from: DateComponents(hour: 12, minute: 0)) ?? Date()
@@ -81,8 +83,32 @@ struct SettingsView: View {
                                 .font(.caption)
                         }
                     }
+                    
+                    Button(action: {
+                        showingUsageGoalPicker = true
+                    }) {
+                        HStack {
+                            Image(systemName: "clock")
+                                .foregroundColor(.orange)
+                                .frame(width: 24)
+                            
+                            Text("使用时间目标")
+                                .foregroundColor(.primary)
+                            
+                            Spacer()
+                            
+                            Text(formatGoalTime(tempDailyUsageGoal))
+                                .foregroundColor(.secondary)
+                            
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.secondary)
+                                .font(.caption)
+                        }
+                    }
                 } header: {
                     Text("目标设置")
+                } footer: {
+                    Text("专注目标是您希望每天达到的专注时间，使用时间目标是您希望控制的每日手机使用时间上限")
                 }
                 
                 Section {
@@ -283,7 +309,12 @@ struct SettingsView: View {
                 loadSettings()
             }
             .sheet(isPresented: $showingGoalPicker) {
-                GoalPickerView(selectedGoal: $tempDailyGoal) {
+                GoalPickerView(selectedGoal: $tempDailyGoal, goalType: .focus) {
+                    saveSettings()
+                }
+            }
+            .sheet(isPresented: $showingUsageGoalPicker) {
+                GoalPickerView(selectedGoal: $tempDailyUsageGoal, goalType: .usage) {
                     saveSettings()
                 }
             }
@@ -324,6 +355,7 @@ struct SettingsView: View {
             if let userSettings = settings.first {
                 self.userSettings = userSettings
                 tempDailyGoal = userSettings.dailyFocusGoal / 3600 // Convert seconds to hours
+                tempDailyUsageGoal = userSettings.dailyUsageGoal / 3600 // Convert seconds to hours
                 tempSleepStart = userSettings.sleepStartTime
                 tempSleepEnd = userSettings.sleepEndTime
                 tempLunchEnabled = userSettings.lunchBreakEnabled
@@ -349,6 +381,7 @@ struct SettingsView: View {
         guard let settings = userSettings else { return }
         
         settings.dailyFocusGoal = tempDailyGoal * 3600 // Convert hours to seconds
+        settings.dailyUsageGoal = tempDailyUsageGoal * 3600 // Convert hours to seconds
         settings.sleepStartTime = tempSleepStart
         settings.sleepEndTime = tempSleepEnd
         settings.lunchBreakEnabled = tempLunchEnabled
@@ -432,16 +465,48 @@ struct SettingsView_Previews: PreviewProvider {
 // MARK: - Goal Picker View
 struct GoalPickerView: View {
     @Binding var selectedGoal: Double
+    let goalType: GoalType
     let onSave: () -> Void
     @Environment(\.dismiss) private var dismiss
     
-    private let goalOptions: [Double] = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 8.0]
+    enum GoalType {
+        case focus
+        case usage
+        
+        var title: String {
+            switch self {
+            case .focus: return "专注目标"
+            case .usage: return "使用时间目标"
+            }
+        }
+        
+        var headerText: String {
+            switch self {
+            case .focus: return "选择每日专注目标"
+            case .usage: return "选择每日使用时间目标"
+            }
+        }
+        
+        var footerText: String {
+            switch self {
+            case .focus: return "建议根据个人情况设置合理的目标，循序渐进提高专注能力"
+            case .usage: return "设置每日手机使用时间上限，帮助控制数字设备使用时间"
+            }
+        }
+        
+        var goalOptions: [Double] {
+            switch self {
+            case .focus: return [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 8.0]
+            case .usage: return [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 12.0, 14.0]
+            }
+        }
+    }
     
     var body: some View {
         NavigationView {
             List {
                 Section {
-                    ForEach(goalOptions, id: \.self) { goal in
+                    ForEach(goalType.goalOptions, id: \.self) { goal in
                         HStack {
                             Text(formatGoalTime(goal))
                             
@@ -458,12 +523,12 @@ struct GoalPickerView: View {
                         }
                     }
                 } header: {
-                    Text("选择每日专注目标")
+                    Text(goalType.headerText)
                 } footer: {
-                    Text("建议根据个人情况设置合理的目标，循序渐进提高专注能力")
+                    Text(goalType.footerText)
                 }
             }
-            .navigationTitle("专注目标")
+            .navigationTitle(goalType.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {

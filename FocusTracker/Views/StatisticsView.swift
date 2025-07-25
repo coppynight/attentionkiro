@@ -4,9 +4,28 @@ import CoreData
 struct StatisticsView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var focusManager: FocusManager
+    @StateObject private var tagManager: TagManager
+    @StateObject private var timeAnalysisManager: TimeAnalysisManager
     
     @State private var selectedTimeRange: TimeRange = .week
     @State private var personalBestRecord: (duration: TimeInterval, date: Date)?
+    
+    init() {
+        let context = PersistenceController.shared.container.viewContext
+        self._tagManager = StateObject(wrappedValue: TagManager(viewContext: context))
+        
+        // Initialize TimeAnalysisManager with dependencies
+        let focusManager = FocusManager(
+            usageMonitor: UsageMonitor(),
+            viewContext: context
+        )
+        let tagManager = TagManager(viewContext: context)
+        self._timeAnalysisManager = StateObject(wrappedValue: TimeAnalysisManager(
+            viewContext: context,
+            focusManager: focusManager,
+            tagManager: tagManager
+        ))
+    }
     
     enum TimeRange: String, CaseIterable, Identifiable {
         case week = "7天"
@@ -19,13 +38,33 @@ struct StatisticsView: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 24) {
-                    // Weekly trend chart
+                    // NEW: Weekly trend chart (enhanced with usage data)
+                    WeeklyTrendChart(
+                        weeklyData: timeAnalysisManager.weeklyTrend,
+                        showFocusData: true
+                    )
+                    
+                    // NEW: App usage ranking
+                    AppUsageRankingView(
+                        appUsageData: timeAnalysisManager.todaysAppBreakdown,
+                        totalTime: timeAnalysisManager.todaysUsageTime,
+                        showExtendedStats: true
+                    )
+                    
+                    // NEW: Scene tag analysis
+                    SceneTagAnalysisView(
+                        tagDistribution: timeAnalysisManager.todaysTagDistribution,
+                        totalTime: timeAnalysisManager.todaysUsageTime,
+                        showTrends: true
+                    )
+                    
+                    // EXISTING: Weekly trend chart (original focus data)
                     WeeklyTrendChartView()
                     
-                    // Personal best record
+                    // EXISTING: Personal best record
                     PersonalBestView(personalBest: personalBestRecord)
                     
-                    // Focus sessions history
+                    // EXISTING: Focus sessions history
                     FocusSessionsHistoryView()
                 }
                 .padding()
@@ -45,6 +84,7 @@ struct StatisticsView: View {
         }
         .onAppear {
             loadPersonalBestRecord()
+            timeAnalysisManager.startMonitoring()
         }
     }
     
@@ -365,11 +405,14 @@ struct DetailedSessionRowView: View {
 
 struct StatisticsView_Previews: PreviewProvider {
     static var previews: some View {
+        let context = PersistenceController.preview.container.viewContext
+        let focusManager = FocusManager(
+            usageMonitor: UsageMonitor(),
+            viewContext: context
+        )
+        
         StatisticsView()
-            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-            .environmentObject(FocusManager(
-                usageMonitor: UsageMonitor(),
-                viewContext: PersistenceController.preview.container.viewContext
-            ))
+            .environment(\.managedObjectContext, context)
+            .environmentObject(focusManager)
     }
 }

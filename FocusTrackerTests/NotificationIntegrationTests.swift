@@ -7,16 +7,16 @@ class NotificationIntegrationTests: XCTestCase {
     var persistenceController: PersistenceController!
     var viewContext: NSManagedObjectContext!
     var focusManager: FocusManager!
-    var usageMonitor: TestUsageMonitor!
+    var usageMonitor: NotificationTestUsageMonitor!
     
     override func setUpWithError() throws {
         persistenceController = PersistenceController(inMemory: true)
         viewContext = persistenceController.container.viewContext
-        usageMonitor = TestUsageMonitor()
+        usageMonitor = NotificationTestUsageMonitor()
         focusManager = FocusManager(usageMonitor: usageMonitor, viewContext: viewContext)
         
         // Create default user settings
-        let settings = UserSettings.createDefaultSettings(in: viewContext)
+        _ = UserSettings.createDefaultSettings(in: viewContext)
         try viewContext.save()
     }
     
@@ -81,7 +81,7 @@ class NotificationIntegrationTests: XCTestCase {
         }
         
         // Test streak calculation
-        let mockNotificationManager = MockNotificationManager()
+        let mockNotificationManager = NotificationTestMockManager()
         let streak = mockNotificationManager.testCalculateStreak(viewContext: viewContext)
         
         XCTAssertEqual(streak, 3)
@@ -111,7 +111,7 @@ class NotificationIntegrationTests: XCTestCase {
         }
         
         // Test decline detection
-        let mockNotificationManager = MockNotificationManager()
+        let mockNotificationManager = NotificationTestMockManager()
         let decline = mockNotificationManager.testCalculateDecline(viewContext: viewContext)
         
         XCTAssertEqual(decline, 0.5, accuracy: 0.01) // 50% decline
@@ -149,7 +149,7 @@ class NotificationIntegrationTests: XCTestCase {
 
 // MARK: - Mock Classes
 
-class TestUsageMonitor: UsageMonitor {
+class NotificationTestUsageMonitor: UsageMonitor {
     var onFocusSessionDetectedCallback: ((Date, Date) -> Void)?
     
     override var onFocusSessionDetected: ((Date, Date) -> Void)? {
@@ -166,7 +166,7 @@ class TestUsageMonitor: UsageMonitor {
     }
 }
 
-class MockNotificationManager {
+class NotificationTestMockManager {
     func testCalculateStreak(viewContext: NSManagedObjectContext) -> Int {
         let calendar = Calendar.current
         let today = Date()

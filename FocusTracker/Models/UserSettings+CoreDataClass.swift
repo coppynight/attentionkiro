@@ -225,4 +225,6 @@ public class UserSettings: NSManagedObject {
         let sign = offset >= 0 ? "+" : "-"
         return String(format: "GMT%@%02d:%02d", sign, abs(hours), minutes)
     }
+    
+
 }

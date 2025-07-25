@@ -41,7 +41,7 @@ xcodebuild -project FocusTracker.xcodeproj clean
 - Follow Swift naming conventions (camelCase)
 - Use `@FetchRequest` for Core Data queries in SwiftUI
 - Separate Core Data class extensions into +CoreDataClass and +CoreDataProperties files
-- 需要操作Xcode时请使用MCP
-- 需要编译工程时，请在iOS平台上进行编译
+- 使用xcodeproj命令创建源码文件
+- 需要编译项目时请使用MCP，并在iOS平台上编译
 - 在编译前，先检查新创建的文件是否被正确添加到工程，如果没有添加，先暂停操作并列出需要被添加的文件请求人工添加，在人工添加完成后再继续刚才的编译
 - 完成每个任务后，对工程进行iOS端的编译，确保编译通过

@@ -2,15 +2,30 @@ import Foundation
 @testable import FocusTracker
 
 // 简化的测试用使用监控器
-class TestUsageMonitor: UsageMonitorProtocol {
-    var isMonitoring = false
-    var onFocusSessionDetected: ((Date, Date) -> Void)?
+class TestUsageMonitor: UsageMonitor {
     
-    func startMonitoring() {
+    override init() {
+        super.init()
+    }
+    
+    override func startMonitoring() {
         isMonitoring = true
     }
     
-    func stopMonitoring() {
+    override func stopMonitoring() {
         isMonitoring = false
+    }
+    
+    override func getCurrentUsageSession() -> AppUsageData? {
+        return nil
+    }
+    
+    // Helper method for testing
+    func simulateFocusSession(startTime: Date, endTime: Date) {
+        onFocusSessionDetected?(startTime, endTime)
+    }
+    
+    func simulateAppUsage(_ data: AppUsageData) {
+        onAppUsageDetected?(data)
     }
 }

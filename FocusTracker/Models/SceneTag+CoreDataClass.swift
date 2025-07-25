@@ -3,7 +3,8 @@ import CoreData
 import SwiftUI
 
 @objc(SceneTag)
-public class SceneTag: NSManagedObject {
+public class SceneTag: NSManagedObject, Identifiable {
+    public var id: String { tagID }
     
     // MARK: - Computed Properties
     
