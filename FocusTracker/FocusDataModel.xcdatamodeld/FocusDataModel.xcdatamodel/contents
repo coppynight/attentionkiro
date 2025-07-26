@@ -12,11 +12,18 @@
         <attribute name="startTime" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
     <entity name="FocusSession" representedClassName="FocusSession" syncable="YES" codeGenerationType="none">
+        <attribute name="activityName" optional="YES" attributeType="String"/>
+        <attribute name="category" optional="YES" attributeType="String"/>
         <attribute name="duration" optional="NO" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="endTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isActive" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="isCompleted" optional="NO" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isValid" optional="NO" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
         <attribute name="sessionType" optional="NO" attributeType="String" defaultValueString="focus"/>
         <attribute name="startTime" optional="NO" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="targetDuration" optional="NO" attributeType="Double" defaultValueString="1500" usesScalarValueType="YES"/>
     </entity>
     <entity name="SceneTag" representedClassName="SceneTag" syncable="YES" codeGenerationType="none">
         <attribute name="associatedApps" optional="YES" attributeType="String"/>

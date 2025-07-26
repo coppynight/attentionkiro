@@ -6,13 +6,25 @@ struct StatisticsView: View {
     @EnvironmentObject private var focusManager: FocusManager
     @StateObject private var tagManager: TagManager
     @StateObject private var timeAnalysisManager: TimeAnalysisManager
+    @StateObject private var focusQualityAnalyzer: FocusQualityAnalyzer
     
     @State private var selectedTimeRange: TimeRange = .week
     @State private var personalBestRecord: (duration: TimeInterval, date: Date)?
+    @State private var selectedAnalysisTab: AnalysisTab = .overview
+    
+    enum AnalysisTab: String, CaseIterable, Identifiable {
+        case overview = "概览"
+        case quality = "专注质量"
+        case interruptions = "打断分析"
+        case timeSlots = "时段分析"
+        
+        var id: String { self.rawValue }
+    }
     
     init() {
         let context = PersistenceController.shared.container.viewContext
         self._tagManager = StateObject(wrappedValue: TagManager(viewContext: context))
+        self._focusQualityAnalyzer = StateObject(wrappedValue: FocusQualityAnalyzer(viewContext: context))
         
         // Initialize TimeAnalysisManager with dependencies
         let focusManager = FocusManager(
@@ -36,18 +48,40 @@ struct StatisticsView: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // 专注时间趋势
-                    FocusTimeTrendView()
-                    
-                    // 标签使用分析
-                    TagUsageAnalysisView()
-                    
-                    // 专注时间统计
-                    FocusTimeStatsView()
+            VStack(spacing: 0) {
+                // 分析标签选择器
+                Picker("分析类型", selection: $selectedAnalysisTab) {
+                    ForEach(AnalysisTab.allCases) { tab in
+                        Text(tab.rawValue).tag(tab)
+                    }
                 }
+                .pickerStyle(SegmentedPickerStyle())
                 .padding()
+                
+                ScrollView {
+                    VStack(spacing: 20) {
+                        switch selectedAnalysisTab {
+                        case .overview:
+                            // 原有的概览视图
+                            FocusTimeTrendView()
+                            TagUsageAnalysisView()
+                            FocusTimeStatsView()
+                            
+                        case .quality:
+                            // 专注质量分析
+                            FocusQualityView()
+                            
+                        case .interruptions:
+                            // 打断分析
+                            InterruptionAnalysisView()
+                            
+                        case .timeSlots:
+                            // 时段分析
+                            TimeSlotAnalysisView()
+                        }
+                    }
+                    .padding()
+                }
             }
             .navigationTitle("时间分析")
             .navigationBarTitleDisplayMode(.large)
@@ -455,6 +489,520 @@ struct FocusTimeStatsView: View {
 }
 
 
+
+// MARK: - Focus Quality View
+struct FocusQualityView: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    @StateObject private var focusQualityAnalyzer: FocusQualityAnalyzer
+    @State private var todayMetrics: FocusQualityMetrics?
+    @State private var weeklyMetrics: [FocusQualityMetrics] = []
+    
+    init() {
+        let context = PersistenceController.shared.container.viewContext
+        self._focusQualityAnalyzer = StateObject(wrappedValue: FocusQualityAnalyzer(viewContext: context))
+    }
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            // 今日专注质量概览
+            if let metrics = todayMetrics {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("今日专注质量")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                    
+                    // 质量评分
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("专注质量评分")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                            
+                            Text("\(Int(metrics.focusQualityScore))")
+                                .font(.largeTitle)
+                                .fontWeight(.bold)
+                                .foregroundColor(qualityScoreColor(metrics.focusQualityScore))
+                        }
+                        
+                        Spacer()
+                        
+                        // 质量评分环形图
+                        ZStack {
+                            Circle()
+                                .stroke(Color.gray.opacity(0.3), lineWidth: 8)
+                                .frame(width: 80, height: 80)
+                            
+                            Circle()
+                                .trim(from: 0, to: CGFloat(metrics.focusQualityScore / 100))
+                                .stroke(qualityScoreColor(metrics.focusQualityScore), 
+                                       style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                                .frame(width: 80, height: 80)
+                                .rotationEffect(.degrees(-90))
+                        }
+                    }
+                    
+                    // 时间分布
+                    VStack(spacing: 12) {
+                        FocusTimeBreakdownRow(
+                            title: "深度专注",
+                            time: metrics.deepFocusTime,
+                            color: .green,
+                            icon: "brain.head.profile"
+                        )
+                        
+                        FocusTimeBreakdownRow(
+                            title: "中等专注",
+                            time: metrics.mediumFocusTime,
+                            color: .orange,
+                            icon: "clock"
+                        )
+                        
+                        FocusTimeBreakdownRow(
+                            title: "碎片时间",
+                            time: metrics.fragmentedTime,
+                            color: .red,
+                            icon: "timer"
+                        )
+                    }
+                    
+                    // 打断信息
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("打断次数")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text("\(metrics.interruptionCount)")
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                        }
+                        
+                        Spacer()
+                        
+                        VStack(alignment: .trailing) {
+                            Text("最长专注")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text(formatTime(metrics.longestFocusStreak))
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                        }
+                    }
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(16)
+            }
+            
+            // 7天专注质量趋势
+            VStack(alignment: .leading, spacing: 16) {
+                Text("7天质量趋势")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                
+                if weeklyMetrics.isEmpty {
+                    Text("暂无足够数据")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .frame(height: 100)
+                } else {
+                    HStack(alignment: .bottom, spacing: 8) {
+                        ForEach(weeklyMetrics, id: \.date) { dayMetrics in
+                            VStack(spacing: 4) {
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(qualityScoreColor(dayMetrics.focusQualityScore))
+                                    .frame(height: CGFloat(dayMetrics.focusQualityScore))
+                                
+                                Text(formatDayOfWeek(dayMetrics.date))
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                    }
+                    .frame(height: 120)
+                }
+            }
+            .padding()
+            .background(Color(.systemGray6))
+            .cornerRadius(16)
+        }
+        .onAppear {
+            loadQualityMetrics()
+        }
+    }
+    
+    private func loadQualityMetrics() {
+        let today = Date()
+        todayMetrics = focusQualityAnalyzer.analyzeFocusQuality(for: today)
+        
+        // 加载7天数据
+        let calendar = Calendar.current
+        weeklyMetrics = (0..<7).compactMap { i in
+            guard let date = calendar.date(byAdding: .day, value: -i, to: today) else { return nil }
+            return focusQualityAnalyzer.analyzeFocusQuality(for: date)
+        }.reversed()
+    }
+    
+    private func qualityScoreColor(_ score: Double) -> Color {
+        switch score {
+        case 80...100:
+            return .green
+        case 60..<80:
+            return .orange
+        case 40..<60:
+            return .yellow
+        default:
+            return .red
+        }
+    }
+    
+    private func formatTime(_ timeInterval: TimeInterval) -> String {
+        let hours = Int(timeInterval) / 3600
+        let minutes = Int(timeInterval.truncatingRemainder(dividingBy: 3600)) / 60
+        
+        if hours > 0 {
+            return "\(hours)h \(minutes)m"
+        } else {
+            return "\(minutes)m"
+        }
+    }
+    
+    private func formatDayOfWeek(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "E"
+        formatter.locale = Locale(identifier: "zh_CN")
+        return formatter.string(from: date)
+    }
+}
+
+struct FocusTimeBreakdownRow: View {
+    let title: String
+    let time: TimeInterval
+    let color: Color
+    let icon: String
+    
+    var body: some View {
+        HStack {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundColor(color)
+                .frame(width: 24)
+            
+            Text(title)
+                .font(.subheadline)
+                .foregroundColor(.primary)
+            
+            Spacer()
+            
+            Text(formatTime(time))
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .foregroundColor(color)
+        }
+    }
+    
+    private func formatTime(_ timeInterval: TimeInterval) -> String {
+        let hours = Int(timeInterval) / 3600
+        let minutes = Int(timeInterval.truncatingRemainder(dividingBy: 3600)) / 60
+        
+        if hours > 0 {
+            return "\(hours)h \(minutes)m"
+        } else {
+            return "\(minutes)m"
+        }
+    }
+}
+
+// MARK: - Interruption Analysis View
+struct InterruptionAnalysisView: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    @StateObject private var focusQualityAnalyzer: FocusQualityAnalyzer
+    @State private var todayAnalysis: InterruptionAnalysis?
+    @State private var weeklyInterruptions: [Int] = []
+    
+    init() {
+        let context = PersistenceController.shared.container.viewContext
+        self._focusQualityAnalyzer = StateObject(wrappedValue: FocusQualityAnalyzer(viewContext: context))
+    }
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            // 今日打断分析
+            if let analysis = todayAnalysis {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("今日打断分析")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                    
+                    // 打断统计
+                    HStack(spacing: 20) {
+                        VStack {
+                            Text("\(analysis.totalInterruptions)")
+                                .font(.largeTitle)
+                                .fontWeight(.bold)
+                                .foregroundColor(.red)
+                            Text("总打断次数")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        VStack {
+                            Text("\(Int(analysis.interruptionRecoveryRate * 100))%")
+                                .font(.largeTitle)
+                                .fontWeight(.bold)
+                                .foregroundColor(.green)
+                            Text("恢复率")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        VStack {
+                            Text("\(analysis.mostCommonInterruptionHour):00")
+                                .font(.largeTitle)
+                                .fontWeight(.bold)
+                                .foregroundColor(.orange)
+                            Text("高发时段")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    
+                    // 打断类型分布
+                    if !analysis.interruptionsByType.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("打断类型分布")
+                                .font(.headline)
+                                .foregroundColor(.primary)
+                            
+                            ForEach(Array(analysis.interruptionsByType.keys.sorted()), id: \.self) { type in
+                                HStack {
+                                    Text(type)
+                                        .font(.subheadline)
+                                    
+                                    Spacer()
+                                    
+                                    Text("\(analysis.interruptionsByType[type] ?? 0) 次")
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(16)
+            }
+            
+            // 7天打断趋势
+            VStack(alignment: .leading, spacing: 16) {
+                Text("7天打断趋势")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                
+                if weeklyInterruptions.isEmpty {
+                    Text("暂无足够数据")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .frame(height: 100)
+                } else {
+                    HStack(alignment: .bottom, spacing: 8) {
+                        ForEach(Array(weeklyInterruptions.enumerated()), id: \.offset) { index, count in
+                            VStack(spacing: 4) {
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(interruptionColor(count))
+                                    .frame(height: max(CGFloat(count * 10), 4))
+                                
+                                Text(dayLabel(for: index))
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                    }
+                    .frame(height: 120)
+                }
+            }
+            .padding()
+            .background(Color(.systemGray6))
+            .cornerRadius(16)
+        }
+        .onAppear {
+            loadInterruptionAnalysis()
+        }
+    }
+    
+    private func loadInterruptionAnalysis() {
+        let today = Date()
+        todayAnalysis = focusQualityAnalyzer.analyzeInterruptions(for: today)
+        
+        // 加载7天打断数据
+        let calendar = Calendar.current
+        weeklyInterruptions = (0..<7).map { i in
+            guard let date = calendar.date(byAdding: .day, value: -i, to: today) else { return 0 }
+            let analysis = focusQualityAnalyzer.analyzeInterruptions(for: date)
+            return analysis.totalInterruptions
+        }.reversed()
+    }
+    
+    private func interruptionColor(_ count: Int) -> Color {
+        switch count {
+        case 0...2:
+            return .green
+        case 3...5:
+            return .orange
+        default:
+            return .red
+        }
+    }
+    
+    private func dayLabel(for index: Int) -> String {
+        let calendar = Calendar.current
+        let today = Date()
+        guard let date = calendar.date(byAdding: .day, value: -(6-index), to: today) else { return "" }
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "E"
+        formatter.locale = Locale(identifier: "zh_CN")
+        return formatter.string(from: date)
+    }
+}
+
+// MARK: - Time Slot Analysis View
+struct TimeSlotAnalysisView: View {
+    @Environment(\.managedObjectContext) private var viewContext
+    @StateObject private var focusQualityAnalyzer: FocusQualityAnalyzer
+    @State private var timeSlotAnalysis: FocusTimeSlotAnalysis?
+    
+    init() {
+        let context = PersistenceController.shared.container.viewContext
+        self._focusQualityAnalyzer = StateObject(wrappedValue: FocusQualityAnalyzer(viewContext: context))
+    }
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            // 时段评分
+            if let analysis = timeSlotAnalysis {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("时段专注评分")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                    
+                    VStack(spacing: 12) {
+                        TimeSlotScoreRow(
+                            title: "上午 (6:00-12:00)",
+                            score: analysis.morningFocusScore,
+                            icon: "sunrise"
+                        )
+                        
+                        TimeSlotScoreRow(
+                            title: "下午 (12:00-18:00)",
+                            score: analysis.afternoonFocusScore,
+                            icon: "sun.max"
+                        )
+                        
+                        TimeSlotScoreRow(
+                            title: "晚上 (18:00-22:00)",
+                            score: analysis.eveningFocusScore,
+                            icon: "moon"
+                        )
+                    }
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(16)
+                
+                // 最佳和最差时段
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("专注时段分析")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                    
+                    HStack(spacing: 20) {
+                        VStack(alignment: .leading) {
+                            Text("最佳时段")
+                                .font(.headline)
+                                .foregroundColor(.green)
+                            
+                            ForEach(analysis.bestFocusHours, id: \.self) { hour in
+                                Text("\(hour):00-\(hour+1):00")
+                                    .font(.subheadline)
+                                    .foregroundColor(.primary)
+                            }
+                        }
+                        
+                        Spacer()
+                        
+                        VStack(alignment: .trailing) {
+                            Text("需改进时段")
+                                .font(.headline)
+                                .foregroundColor(.red)
+                            
+                            ForEach(analysis.worstFocusHours, id: \.self) { hour in
+                                Text("\(hour):00-\(hour+1):00")
+                                    .font(.subheadline)
+                                    .foregroundColor(.primary)
+                            }
+                        }
+                    }
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(16)
+            }
+        }
+        .onAppear {
+            loadTimeSlotAnalysis()
+        }
+    }
+    
+    private func loadTimeSlotAnalysis() {
+        let calendar = Calendar.current
+        let today = Date()
+        let weekAgo = calendar.date(byAdding: .day, value: -7, to: today)!
+        let period = DateInterval(start: weekAgo, end: today)
+        
+        timeSlotAnalysis = focusQualityAnalyzer.analyzeFocusTimeSlots(for: period)
+    }
+}
+
+struct TimeSlotScoreRow: View {
+    let title: String
+    let score: Double
+    let icon: String
+    
+    var body: some View {
+        HStack {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundColor(scoreColor(score))
+                .frame(width: 24)
+            
+            Text(title)
+                .font(.subheadline)
+                .foregroundColor(.primary)
+            
+            Spacer()
+            
+            Text("\(Int(score))")
+                .font(.title3)
+                .fontWeight(.semibold)
+                .foregroundColor(scoreColor(score))
+        }
+    }
+    
+    private func scoreColor(_ score: Double) -> Color {
+        switch score {
+        case 70...100:
+            return .green
+        case 40..<70:
+            return .orange
+        default:
+            return .red
+        }
+    }
+}
 
 struct StatisticsView_Previews: PreviewProvider {
     static var previews: some View {

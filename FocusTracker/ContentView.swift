@@ -10,17 +10,17 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            HomeView()
+            TimeRecordView()
                 .tabItem {
                     Image(systemName: "clock.fill")
                     Text("时间")
                 }
                 .tag(0)
             
-            StatisticsView()
+            TimeInsightsView()
                 .tabItem {
-                    Image(systemName: "chart.bar.fill")
-                    Text("分析")
+                    Image(systemName: "lightbulb.fill")
+                    Text("洞察")
                 }
                 .tag(1)
             

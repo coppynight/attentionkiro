@@ -19,7 +19,7 @@ public class FocusSession: NSManagedObject {
     }
     
     /// Returns true if this is an active (ongoing) focus session
-    var isActive: Bool {
+    var isCurrentlyActive: Bool {
         return endTime == nil
     }
     

@@ -340,7 +340,7 @@ struct TagDistributionRow: View {
 struct TimeInsightsCard: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject private var focusManager: FocusManager
-    @State private var insights: [TimeInsight] = []
+    @State private var insights: [HomeTimeInsight] = []
     
     var body: some View {
         VStack(spacing: 16) {
@@ -381,7 +381,7 @@ struct TimeInsightsCard: View {
     
     private func generateInsights() {
         // 生成基于专注时间的简单洞察
-        var newInsights: [TimeInsight] = []
+        var newInsights: [HomeTimeInsight] = []
         
         // 获取今日专注时间
         let todaysFocusTime = focusManager.todaysFocusTime
@@ -390,7 +390,7 @@ struct TimeInsightsCard: View {
         
         if todaysFocusTime > 0 {
             if hours > 0 {
-                newInsights.append(TimeInsight(
+                newInsights.append(HomeTimeInsight(
                     id: "focus_time",
                     icon: "brain.head.profile",
                     title: "今日已专注 \(hours) 小时 \(minutes) 分钟",
@@ -398,7 +398,7 @@ struct TimeInsightsCard: View {
                     color: .green
                 ))
             } else if minutes > 0 {
-                newInsights.append(TimeInsight(
+                newInsights.append(HomeTimeInsight(
                     id: "focus_time",
                     icon: "brain.head.profile",
                     title: "今日已专注 \(minutes) 分钟",
@@ -407,7 +407,7 @@ struct TimeInsightsCard: View {
                 ))
             }
         } else {
-            newInsights.append(TimeInsight(
+            newInsights.append(HomeTimeInsight(
                 id: "no_focus",
                 icon: "target",
                 title: "今日还未开始专注",
@@ -422,7 +422,7 @@ struct TimeInsightsCard: View {
         let weeklyHours = Int(weeklyTotal) / 3600
         
         if weeklyHours > 0 {
-            newInsights.append(TimeInsight(
+            newInsights.append(HomeTimeInsight(
                 id: "weekly_focus",
                 icon: "calendar",
                 title: "本周已专注 \(weeklyHours) 小时",
@@ -435,7 +435,7 @@ struct TimeInsightsCard: View {
     }
 }
 
-struct TimeInsight {
+struct HomeTimeInsight {
     let id: String
     let icon: String
     let title: String
@@ -444,7 +444,7 @@ struct TimeInsight {
 }
 
 struct InsightRow: View {
-    let insight: TimeInsight
+    let insight: HomeTimeInsight
     
     var body: some View {
         HStack(spacing: 12) {
