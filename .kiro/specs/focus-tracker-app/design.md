@@ -1,691 +1,743 @@
-# 设计文档
+# Timelog 设计文档
 
 ## 概述
 
-智能时间分析应用基于现有的FocusTracker项目进行扩展开发，采用SwiftUI框架构建。MVP版本将在现有专注追踪功能基础上，扩展为全面的时间监控和基础分析功能。
+**"人生就是一个项目，你花费的时间就是在向人生的git提交记录，你还可以给你的美好时刻打上tag。"**
 
-### 现有项目基础
-- **架构**：已建立MVVM架构，包含FocusManager、UsageMonitor、NotificationManager
-- **数据层**：Core Data持久化，包含FocusSession和UserSettings实体
-- **UI层**：SwiftUI界面，包含HomeView、StatisticsView、SettingsView
-- **服务层**：后台监控、通知管理、数据持久化服务
+Timelog（时间日志）是一个充满诗意的iOS时间管理应用，将人生比作一个代码项目。我们废弃历史项目代码，基于全新的设计理念从零开始构建，让用户以程序员的视角审视和优化自己的时间使用。
 
-### MVP扩展设计原则
-- **增量开发**：基于现有代码进行功能扩展，避免重写
-- **向后兼容**：保持现有专注追踪功能的完整性
-- **架构复用**：利用现有的服务层和数据层架构
-- **渐进增强**：逐步添加新功能，确保每个阶段都可用
+### 核心设计理念
+- **时间即代码**：每分钟的时间使用都是一次向人生项目的commit
+- **美好时刻标记**：为重要时刻打tag，就像标记重要的代码版本
+- **时间记录图**：GitHub风格的热力图展示每天的时间投入
+- **智能代码审查**：AI分析时间使用模式，提供人生优化建议
 
-### MVP扩展功能范围
-- **监控扩展**：从专注追踪扩展到全面应用使用监控
-- **场景标签**：在现有数据模型基础上添加标签分类
-- **分析增强**：扩展现有统计功能，添加更丰富的可视化
-- **界面优化**：改进现有界面以支持新的分析功能
+### 设计原则
+- **诗意化表达**：用温暖的方式重新诠释程序员熟悉的Git概念
+- **情感化设计**：让用户感受到时间的温度，不只是冷冰冰的数据
+- **简洁而深刻**：用简单的视觉元素传达深刻的人生哲理
+- **成长可视化**：让用户看到自己的进步和变化，为"高记录"感到自豪
 
 ## 架构
 
-### 基于现有项目的扩展架构
+### 人生项目架构设计
 
 ```mermaid
 graph TB
-    subgraph "现有架构（保持）"
-        UI[SwiftUI Views]
-        FM[FocusManager]
-        UM[UsageMonitor]
-        NM[NotificationManager]
-        PC[PersistenceController]
+    subgraph "人生项目前端 (Life Project Frontend)"
+        HV[时间记录图 HeatmapView]
+        TV[时间标签系统 TaggingView]
+        IV[智能洞察 InsightsView]
+        SV[项目设置 SettingsView]
+    end
+    
+    subgraph "人生项目服务层 (Life Project Services)"
+        HM[热力图管理器 FocusHeatmapManager]
+        TBM[时间块管理器 TimeBlockManager]
+        IM[洞察管理器 InsightsManager]
+        SM[设置管理器 SettingsManager]
+    end
+    
+    subgraph "人生数据模型 (Life Data Models)"
+        TB[时间块 TimeBlock]
+        HTB[热力图时间块 HeatmapTimeBlock]
+        TI[时间洞察 TimeInsights]
+        US[用户设置 UserSettings]
+        BM[美好时刻 BeautifulMoment]
+    end
+    
+    subgraph "人生项目基础设施 (Life Infrastructure)"
+        PC[持久化控制器 PersistenceController]
         CD[Core Data]
+        AI[AI分析引擎 AIAnalysisEngine]
     end
     
-    subgraph "MVP扩展组件"
-        TM[TagManager - 新增]
-        TAM[TimeAnalysisManager - 扩展]
-        AS[AnalyticsService - 新增]
-    end
+    HV --> HM
+    TV --> TBM
+    IV --> IM
+    SV --> SM
     
-    subgraph "数据模型扩展"
-        FS[FocusSession - 现有]
-        US[UserSettings - 现有]
-        ST[SceneTag - 新增]
-        AUS[AppUsageSession - 新增]
-    end
+    HM --> HTB
+    TBM --> TB
+    IM --> TI
+    SM --> US
     
-    subgraph "UI扩展"
-        HV[HomeView - 扩展]
-        SV[StatisticsView - 扩展]
-        TV[TagsView - 新增]
-        SEV[SettingsView - 扩展]
-    end
+    HM --> PC
+    TBM --> PC
+    IM --> PC
+    SM --> PC
     
-    subgraph "后续版本功能"
-        AI[AI Analysis Engine]
-        WF[WidgetKit Framework]
-        ML[Core ML]
-    end
-    
-    UI --> FM
-    FM --> UM
-    FM --> PC
     PC --> CD
+    IM --> AI
     
-    TAM --> TM
-    TAM --> AS
-    TM --> CD
-    AS --> CD
-    
-    HV --> TAM
-    SV --> TAM
-    TV --> TM
-    SEV --> FM
-    
-    FS --> CD
+    TB --> CD
+    HTB --> CD
+    TI --> CD
     US --> CD
-    ST --> CD
-    AUS --> CD
-    
-    style AI fill:#f9f9f9,stroke:#ccc,stroke-dasharray: 5 5
-    style WF fill:#f9f9f9,stroke:#ccc,stroke-dasharray: 5 5
-    style ML fill:#f9f9f9,stroke:#ccc,stroke-dasharray: 5 5
+    BM --> CD
 ```
 
-### MVP技术栈
-- **UI框架**：SwiftUI (iOS 16+)
-- **数据存储**：Core Data（本地存储）
-- **状态管理**：Combine + ObservableObject
-- **使用监控**：DeviceActivity Framework
-- **图表可视化**：Swift Charts
-- **后台处理**：Background App Refresh + BGTaskScheduler
+### 技术栈选择
 
-### 后续版本技术栈
-- **AI分析**：Core ML + Create ML + Natural Language
-- **云同步**：CloudKit
-- **通知**：User Notifications Framework
-- **小组件**：WidgetKit
-- **数据分析**：Accelerate Framework
+#### 核心技术栈
+- **UI框架**：SwiftUI - 现代声明式UI，完美支持iOS原生设计
+- **数据存储**：Core Data - 本地数据持久化，保护用户隐私
+- **状态管理**：Combine + ObservableObject - 响应式编程模式
+- **图表可视化**：自定义SwiftUI组件 - 打造独特的GitHub风格热力图
+
+#### 设计系统
+- **颜色系统**：GitHub记录图配色方案
+  - 深绿色 (#196127): 高度专注
+  - 中绿色 (#239a3b): 中等专注  
+  - 浅绿色 (#7bc96f): 轻度专注
+  - 灰色 (#ebedf0): 无活动
+- **字体系统**：SF Pro - Apple原生字体系统
+- **图标系统**：SF Symbols - 语义化图标设计
 
 ## 组件和接口
 
-### 1. 核心数据层
+### 1. 人生数据模型层 (Life Data Models)
 
-#### AppUsageSession (Core Data Entity)
+#### TimeBlock - 时间提交记录
 ```swift
-@objc(AppUsageSession)
-public class AppUsageSession: NSManagedObject {
-    @NSManaged public var startTime: Date
-    @NSManaged public var endTime: Date
-    @NSManaged public var duration: TimeInterval
-    @NSManaged public var appIdentifier: String
-    @NSManaged public var appName: String
-    @NSManaged public var categoryIdentifier: String
-    @NSManaged public var sceneTag: String?
-    @NSManaged public var isProductiveTime: Bool
-    @NSManaged public var interruptionCount: Int16
+@objc(TimeBlock)
+public class TimeBlock: NSManagedObject {
+    @NSManaged public var id: UUID
+    @NSManaged public var startTime: Date        // 提交开始时间
+    @NSManaged public var endTime: Date          // 提交结束时间
+    @NSManaged public var duration: Double       // 提交时长
+    @NSManaged public var isTagged: Bool         // 是否已标记
+    @NSManaged public var taggedActivity: String? // 活动标签（commit message）
+    @NSManaged public var category: String?      // 分类标签
+    @NSManaged public var notes: String?         // 备注信息
+    
+    // 计算属性
+    var timeRangeString: String {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        return "\(formatter.string(from: startTime)) - \(formatter.string(from: endTime))"
+    }
+    
+    var formattedDuration: String {
+        let hours = Int(duration) / 3600
+        let minutes = Int(duration.truncatingRemainder(dividingBy: 3600)) / 60
+        return hours > 0 ? "\(hours)h \(minutes)m" : "\(minutes)m"
+    }
 }
 ```
 
-#### SceneTag (Core Data Entity)
+#### HeatmapTimeBlock - 热力图时间块
 ```swift
-@objc(SceneTag)
-public class SceneTag: NSManagedObject {
-    @NSManaged public var tagID: String
-    @NSManaged public var name: String
-    @NSManaged public var color: String
-    @NSManaged public var isDefault: Bool
-    @NSManaged public var createdAt: Date
-    @NSManaged public var usageCount: Int32
-    @NSManaged public var associatedApps: Set<String>
+struct HeatmapTimeBlock {
+    let id = UUID()
+    let startTime: Date
+    let endTime: Date
+    let focusIntensity: Double      // 专注强度 (0.0 - 1.0)
+    let interruptionCount: Int      // 打断次数
+    let totalFocusTime: TimeInterval // 总专注时间
+    let category: String?           // 分类
+    let activities: [String]        // 活动列表
+    
+    var duration: TimeInterval {
+        endTime.timeIntervalSince(startTime)
+    }
+    
+    var focusQuality: FocusQuality {
+        switch focusIntensity {
+        case 0.8...1.0: return .excellent
+        case 0.6..<0.8: return .good
+        case 0.4..<0.6: return .fair
+        case 0.2..<0.4: return .poor
+        default: return .veryPoor
+        }
+    }
+}
+
+enum FocusQuality: String, CaseIterable {
+    case excellent = "优秀"
+    case good = "良好"
+    case fair = "一般"
+    case poor = "较差"
+    case veryPoor = "很差"
+    
+    var color: Color {
+        switch self {
+        case .excellent: return .green
+        case .good: return .green.opacity(0.8)
+        case .fair: return .green.opacity(0.6)
+        case .poor: return .orange
+        case .veryPoor: return .red
+        }
+    }
 }
 ```
 
-#### AIInsight (Core Data Entity)
+#### BeautifulMoment - 美好时刻标记
 ```swift
-@objc(AIInsight)
-public class AIInsight: NSManagedObject {
-    @NSManaged public var insightID: String
-    @NSManaged public var type: String // "pattern", "recommendation", "achievement", "warning"
-    @NSManaged public var title: String
-    @NSManaged public var content: String
-    @NSManaged public var confidence: Float
-    @NSManaged public var createdAt: Date
-    @NSManaged public var isRead: Bool
-    @NSManaged public var actionable: Bool
-    @NSManaged public var relatedData: Data? // JSON encoded related metrics
+@objc(BeautifulMoment)
+public class BeautifulMoment: NSManagedObject {
+    @NSManaged public var id: UUID
+    @NSManaged public var timeBlock: TimeBlock
+    @NSManaged public var title: String          // 美好时刻标题
+    @NSManaged public var description: String    // 详细描述
+    @NSManaged public var emotion: String        // 情感标记
+    @NSManaged public var createdAt: Date        // 创建时间
+    @NSManaged public var isSpecial: Bool        // 是否特别重要
+    @NSManaged public var tags: Set<String>      // 相关标签
+    
+    // 美好时刻类型
+    enum MomentType: String, CaseIterable {
+        case achievement = "成就时刻"
+        case learning = "学习收获"
+        case creativity = "创意灵感"
+        case connection = "人际连接"
+        case peace = "内心平静"
+        case joy = "快乐时光"
+    }
 }
 ```
 
-#### UserBehaviorPattern (Core Data Entity)
-```swift
-@objc(UserBehaviorPattern)
-public class UserBehaviorPattern: NSManagedObject {
-    @NSManaged public var patternID: String
-    @NSManaged public var patternType: String // "daily_peak", "app_sequence", "break_pattern"
-    @NSManaged public var description: String
-    @NSManaged public var strength: Float // 0.0 to 1.0
-    @NSManaged public var detectedAt: Date
-    @NSManaged public var lastUpdated: Date
-    @NSManaged public var isActive: Bool
-    @NSManaged public var metadata: Data? // JSON encoded pattern details
-}
-```
-
-#### UserSettings (Core Data Entity)
+#### UserSettings - 项目配置
 ```swift
 @objc(UserSettings)
 public class UserSettings: NSManagedObject {
-    @NSManaged public var dailyFocusGoal: TimeInterval
-    @NSManaged public var sleepStartTime: Date
-    @NSManaged public var sleepEndTime: Date
-    @NSManaged public var lunchBreakEnabled: Bool
-    @NSManaged public var lunchBreakStart: Date
-    @NSManaged public var lunchBreakEnd: Date
-    @NSManaged public var notificationsEnabled: Bool
-    @NSManaged public var aiAnalysisEnabled: Bool
-    @NSManaged public var autoTaggingEnabled: Bool
-    @NSManaged public var weeklyReportEnabled: Bool
+    @NSManaged public var timeBlockGranularity: TimeInterval // 时间块粒度
+    @NSManaged public var workingHoursStart: Date           // 工作时间开始
+    @NSManaged public var workingHoursEnd: Date             // 工作时间结束
+    @NSManaged public var enableBeautifulMoments: Bool      // 启用美好时刻
+    @NSManaged public var autoTaggingEnabled: Bool          // 自动标记
+    @NSManaged public var heatmapColorScheme: String        // 热力图配色
+    @NSManaged public var dailyGoalHours: Double            // 每日目标时间
+    @NSManaged public var weeklyReviewEnabled: Bool         // 周报功能
 }
 ```
 
-### 2. 业务逻辑层
+### 2. 人生项目服务层 (Life Project Services)
 
-#### TimeAnalysisManager
+#### TimeBlockManager - 时间块管理器
 ```swift
-protocol TimeAnalysisManagerProtocol {
-    func startMonitoring()
-    func stopMonitoring()
-    func getUsageStatistics(for date: Date) -> UsageStatistics
-    func getWeeklyTrend() -> [DailyUsageData]
-    func getAppUsageBreakdown(for date: Date) -> [AppUsageData]
-    func getSceneTagDistribution(for date: Date) -> [SceneTagData]
-}
-
-class TimeAnalysisManager: ObservableObject, TimeAnalysisManagerProtocol {
-    @Published var todaysUsageTime: TimeInterval = 0
-    @Published var todaysAppBreakdown: [AppUsageData] = []
-    @Published var currentActiveApp: String?
-    @Published var isMonitoring: Bool = false
+class TimeBlockManager: ObservableObject {
+    private let viewContext: NSManagedObjectContext
+    @Published var blockDuration: TimeInterval = 20 * 60 // 默认20分钟粒度
     
-    private let usageMonitor: UsageMonitorProtocol
-    private let aiAnalysisEngine: AIAnalysisEngineProtocol
-    private let tagManager: TagManagerProtocol
-    private let dataService: DataServiceProtocol
-}
-```
-
-#### AIAnalysisEngine
-```swift
-protocol AIAnalysisEngineProtocol {
-    func analyzeUsagePatterns(for period: DateInterval) async -> [UserBehaviorPattern]
-    func generateInsights(from patterns: [UserBehaviorPattern]) async -> [AIInsight]
-    func predictOptimalSchedule(based on: [AppUsageSession]) async -> OptimalSchedule
-    func detectAnomalies(in sessions: [AppUsageSession]) async -> [UsageAnomaly]
-    func recommendTimeGoals(based on: [AppUsageSession]) async -> [TimeGoalRecommendation]
-}
-
-class AIAnalysisEngine: AIAnalysisEngineProtocol {
-    private let mlModel: MLModel
-    private let patternRecognizer: PatternRecognizer
-    private let insightGenerator: InsightGenerator
-    
-    func analyzeUsagePatterns(for period: DateInterval) async -> [UserBehaviorPattern] {
-        // 使用Core ML分析用户行为模式
-        // 识别高峰使用时段、应用切换模式、专注时长等
+    init(viewContext: NSManagedObjectContext) {
+        self.viewContext = viewContext
     }
     
-    func generateInsights(from patterns: [UserBehaviorPattern]) async -> [AIInsight] {
-        // 基于识别的模式生成个性化洞察
-        // 提供改善建议和行动方案
+    // 获取指定日期的时间块（人生提交记录）
+    func getTimeBlocks(for date: Date) -> [TimeBlock] {
+        // 从Core Data获取时间块
+        // 如果没有数据，生成模拟数据用于演示
+    }
+    
+    // 为时间块添加标签（就像给commit添加message）
+    func tagTimeBlock(_ timeBlock: TimeBlock, activity: String, category: String, notes: String? = nil) {
+        timeBlock.taggedActivity = activity
+        timeBlock.category = category
+        timeBlock.notes = notes
+        timeBlock.isTagged = true
+        saveContext()
+    }
+    
+    // 移除时间块标签
+    func removeTag(from timeBlock: TimeBlock) {
+        timeBlock.taggedActivity = nil
+        timeBlock.category = nil
+        timeBlock.notes = nil
+        timeBlock.isTagged = false
+        saveContext()
+    }
+    
+    // 创建美好时刻标记
+    func createBeautifulMoment(for timeBlock: TimeBlock, title: String, description: String) -> BeautifulMoment {
+        let moment = BeautifulMoment(context: viewContext)
+        moment.id = UUID()
+        moment.timeBlock = timeBlock
+        moment.title = title
+        moment.description = description
+        moment.createdAt = Date()
+        moment.isSpecial = true
+        saveContext()
+        return moment
     }
 }
 ```
 
-#### TagManager
+#### FocusHeatmapManager - 时间记录图管理器
 ```swift
-protocol TagManagerProtocol {
-    func getDefaultTags() -> [SceneTag]
-    func createCustomTag(name: String, color: String) -> SceneTag
-    func suggestTagForApp(_ appIdentifier: String) -> SceneTag?
-    func updateTagForSession(_ session: AppUsageSession, tag: SceneTag)
-    func getTagDistribution(for date: Date) -> [TagDistribution]
-    func getTagTrends(for period: DateInterval) -> [TagTrend]
-}
-
-class TagManager: ObservableObject, TagManagerProtocol {
-    @Published var availableTags: [SceneTag] = []
-    @Published var customTags: [SceneTag] = []
+class FocusHeatmapManager: ObservableObject {
+    private let viewContext: NSManagedObjectContext
     
-    private let appCategoryMapping: [String: String] = [
-        "com.apple.mobilemail": "工作",
-        "com.microsoft.Office.Word": "工作",
-        "com.apple.mobilesafari": "浏览",
-        "com.tencent.xin": "社交",
-        // ... 更多应用映射
-    ]
+    init(viewContext: NSManagedObjectContext) {
+        self.viewContext = viewContext
+    }
     
-    func getDefaultTags() -> [SceneTag] {
-        return [
-            SceneTag(name: "工作", color: "#007AFF", isDefault: true),
-            SceneTag(name: "学习", color: "#34C759", isDefault: true),
-            SceneTag(name: "娱乐", color: "#FF9500", isDefault: true),
-            SceneTag(name: "社交", color: "#FF2D92", isDefault: true),
-            SceneTag(name: "健康", color: "#30D158", isDefault: true),
-            SceneTag(name: "购物", color: "#AC39FF", isDefault: true),
-            SceneTag(name: "出行", color: "#64D2FF", isDefault: true)
-        ]
+    // 生成GitHub风格的热力图数据
+    func generateHeatmapBlocks(for date: Date) -> [HeatmapTimeBlock] {
+        let sessions = fetchFocusSessions(for: date)
+        
+        if sessions.isEmpty {
+            return generateMockHeatmapBlocks(for: date) // 演示数据
+        }
+        
+        return analyzeSessionsToHeatmapBlocks(sessions, for: date)
+    }
+    
+    // 分析专注趋势（就像分析代码提交频率）
+    func analyzeFocusTrends(for timeBlocks: [HeatmapTimeBlock]) -> FocusTrendAnalysis {
+        let totalBlocks = timeBlocks.count
+        guard totalBlocks > 0 else {
+            return FocusTrendAnalysis(
+                averageIntensity: 0,
+                totalFocusTime: 0,
+                totalInterruptions: 0,
+                qualityDistribution: [:]
+            )
+        }
+        
+        let totalIntensity = timeBlocks.reduce(0) { $0 + $1.focusIntensity }
+        let averageIntensity = totalIntensity / Double(totalBlocks)
+        
+        let totalFocusTime = timeBlocks.reduce(0) { $0 + $1.totalFocusTime }
+        let totalInterruptions = timeBlocks.reduce(0) { $0 + $1.interruptionCount }
+        
+        var qualityDistribution: [FocusQuality: Int] = [:]
+        for block in timeBlocks {
+            qualityDistribution[block.focusQuality, default: 0] += 1
+        }
+        
+        return FocusTrendAnalysis(
+            averageIntensity: averageIntensity,
+            totalFocusTime: totalFocusTime,
+            totalInterruptions: totalInterruptions,
+            qualityDistribution: qualityDistribution
+        )
+    }
+    
+    // 生成一周的热力图数据（就像GitHub的记录图）
+    func generateWeeklyHeatmap(startDate: Date) -> [Date: [HeatmapTimeBlock]] {
+        var weeklyData: [Date: [HeatmapTimeBlock]] = [:]
+        let calendar = Calendar.current
+        
+        for dayOffset in 0..<7 {
+            if let date = calendar.date(byAdding: .day, value: dayOffset, to: startDate) {
+                weeklyData[date] = generateHeatmapBlocks(for: date)
+            }
+        }
+        
+        return weeklyData
     }
 }
 ```
 
-#### UsageMonitor
+#### InsightsManager - 智能代码审查管理器
 ```swift
-protocol UsageMonitorProtocol {
-    func startMonitoring()
-    func stopMonitoring()
-    func getCurrentUsageSession() -> AppUsageSession?
-    var onAppUsageDetected: ((AppUsageSession) -> Void)? { get set }
-    var onScreenStateChanged: ((Bool) -> Void)? { get set }
-}
-
-class UsageMonitor: UsageMonitorProtocol {
-    @Published var isMonitoring = false
-    @Published var currentSession: AppUsageSession?
-    @Published var screenTimeToday: TimeInterval = 0
+class InsightsManager: ObservableObject {
+    private let viewContext: NSManagedObjectContext
     
-    private let deviceActivityMonitor = DeviceActivityMonitor()
-    private var backgroundTaskID: UIBackgroundTaskIdentifier = .invalid
-    
-    func startMonitoring() {
-        // 使用DeviceActivity Framework监控应用使用
-        // 设置后台任务以持续监控
+    init(viewContext: NSManagedObjectContext) {
+        self.viewContext = viewContext
     }
     
-    func processUsageData(_ data: DeviceActivityData) {
-        // 处理系统提供的使用数据
-        // 创建AppUsageSession实例
-        // 触发AI分析和标签建议
+    // 生成人生代码审查报告
+    func generateInsights(for timeRange: InsightsView.TimeRange) -> TimeInsights {
+        let (startDate, endDate) = getDateRange(for: timeRange)
+        let timeBlocks = fetchTimeBlocks(from: startDate, to: endDate)
+        
+        return analyzeTimeBlocks(timeBlocks, timeRange: timeRange)
+    }
+    
+    // 分析时间使用模式（就像分析代码质量）
+    private func analyzeTimeBlocks(_ timeBlocks: [TimeBlock], timeRange: InsightsView.TimeRange) -> TimeInsights {
+        if timeBlocks.isEmpty {
+            return generateMockInsights(for: timeRange)
+        }
+        
+        let totalTime = timeBlocks.reduce(0) { $0 + $1.duration }
+        let taggedBlocks = timeBlocks.filter { $0.isTagged }
+        let taggedPercentage = timeBlocks.isEmpty ? 0 : Double(taggedBlocks.count) / Double(timeBlocks.count)
+        
+        // 计算分类分布
+        var categoryDistribution: [String: TimeInterval] = [:]
+        for block in taggedBlocks {
+            let category = block.category ?? "未分类"
+            categoryDistribution[category, default: 0] += block.duration
+        }
+        
+        // 计算平均每日时间
+        let days = getDaysCount(for: timeRange)
+        let averageDaily = totalTime / TimeInterval(days)
+        
+        // 分析最活跃时段
+        let mostActiveHour = analyzeMostActiveHour(timeBlocks)
+        
+        // 计算平均专注度
+        let averageFocusIntensity = calculateAverageFocusIntensity(timeBlocks)
+        
+        // 找出最常用标签
+        let mostUsedTag = findMostUsedTag(taggedBlocks)
+        
+        // 生成改进建议（就像代码review建议）
+        let recommendations = generateRecommendations(
+            totalTime: totalTime,
+            taggedPercentage: taggedPercentage,
+            categoryDistribution: categoryDistribution
+        )
+        
+        return TimeInsights(
+            totalTime: totalTime,
+            averageDaily: averageDaily,
+            taggedPercentage: taggedPercentage,
+            categoryDistribution: categoryDistribution,
+            mostActiveHour: mostActiveHour,
+            averageFocusIntensity: averageFocusIntensity,
+            mostUsedTag: mostUsedTag,
+            recommendations: recommendations
+        )
     }
 }
 ```
 
-### 3. 用户界面层（MVP版本）
-
-#### MVP主要视图结构
-```
-TabView
-├── HomeView (今日时间概览)
-│   ├── TimeUsageRingView (时间使用圆环)
-│   ├── AppBreakdownView (应用使用分布)
-│   └── SceneTagSummaryView (场景标签汇总)
-├── AnalyticsView (详细分析)
-│   ├── WeeklyTrendChart (周趋势图)
-│   ├── AppUsageRankingView (应用使用排行)
-│   └── SceneTagAnalysisView (场景分析)
-├── TagsView (标签管理)
-│   ├── TagOverviewView (标签概览)
-│   ├── CustomTagsView (自定义标签)
-│   └── TagEditingView (标签编辑)
-├── SettingsView (设置)
-│   ├── GoalSettingView (目标设置)
-│   └── TimeRangeSettingView (时间范围设置)
-```
-
-#### 后续版本扩展
-```
-├── InsightsView (AI洞察) - 后续版本
-│   ├── PersonalizedInsightsView (个性化洞察)
-│   ├── BehaviorPatternsView (行为模式)
-│   └── RecommendationsView (改善建议)
-├── 小组件功能 - 后续版本
-├── 智能通知 - 后续版本
-└── 高级分析功能 - 后续版本
-```
-
-#### 关键UI组件设计
-
-##### TimeUsageRingView
+#### SettingsManager - 项目配置管理器
 ```swift
-struct TimeUsageRingView: View {
-    let totalTime: TimeInterval
-    let sceneBreakdown: [SceneTagData]
-    let goal: TimeInterval
+class SettingsManager: ObservableObject {
+    private let viewContext: NSManagedObjectContext
+    
+    init(viewContext: NSManagedObjectContext) {
+        self.viewContext = viewContext
+    }
+    
+    // 清除所有人生数据（重置项目）
+    func clearAllData() {
+        let timeBlockRequest: NSFetchRequest<NSFetchRequestResult> = TimeBlock.fetchRequest()
+        let timeBlockDeleteRequest = NSBatchDeleteRequest(fetchRequest: timeBlockRequest)
+        
+        do {
+            try viewContext.execute(timeBlockDeleteRequest)
+            try viewContext.save()
+            print("All life project data cleared successfully")
+        } catch {
+            print("Failed to clear life project data: \(error)")
+        }
+    }
+    
+    // 导出人生数据（就像导出代码仓库）
+    func exportData(format: DataExportView.ExportFormat, dateRange: DataExportView.DateRange) -> URL? {
+        let (startDate, endDate) = getDateRange(for: dateRange)
+        let timeBlocks = fetchTimeBlocks(from: startDate, to: endDate)
+        
+        switch format {
+        case .csv:
+            return exportToCSV(timeBlocks: timeBlocks)
+        case .json:
+            return exportToJSON(timeBlocks: timeBlocks)
+        }
+    }
+}
+```
+
+### 3. 人生项目界面层 (Life Project UI)
+
+#### 主要界面结构
+```
+ContentView (TabView)
+├── TimeView (时间)
+│   ├── SegmentedControl (记录图/标签切换)
+│   ├── HeatmapContentView (GitHub风格热力图)
+│   │   ├── TimeHeatmapView (热力图组件)
+│   │   ├── DailyStatsCard (今日统计卡片)
+│   │   └── DatePicker (日期选择器)
+│   └── TaggingContentView (时间标签系统)
+│       ├── TimeBlockRowView (时间块行视图)
+│       ├── TimeBlockTaggingSheet (标记表单)
+│       └── EmptyStateView (空状态视图)
+├── InsightsView (洞察)
+│   ├── OverviewCard (时间总览卡片)
+│   ├── TimeDistributionCard (时间分布卡片)
+│   ├── HabitsAnalysisCard (习惯分析卡片)
+│   └── RecommendationsCard (建议卡片)
+└── SettingsView (设置)
+    ├── TimeBlockSettingsView (时间块设置)
+    ├── TagManagementView (标签管理)
+    ├── DataExportView (数据导出)
+    └── AboutView (关于页面)
+```
+
+#### 核心UI组件设计
+
+##### TimeHeatmapView - GitHub风格热力图
+```swift
+struct TimeHeatmapView: View {
+    let date: Date
+    let timeBlocks: [HeatmapTimeBlock]
+    
+    // GitHub贡献图配置
+    private let blockSize: CGFloat = 12
+    private let blockSpacing: CGFloat = 2
+    private let blocksPerRow = 24 // 24小时
     
     var body: some View {
-        ZStack {
-            // 多层圆环显示不同场景的时间分布
-            ForEach(sceneBreakdown.indices, id: \.self) { index in
-                Circle()
-                    .trim(from: startAngle(for: index), to: endAngle(for: index))
-                    .stroke(sceneBreakdown[index].color, lineWidth: 8)
-            }
-            
-            VStack {
-                Text(formatTime(totalTime))
-                    .font(.largeTitle.bold())
-                Text("今日使用时间")
+        VStack(alignment: .leading, spacing: 8) {
+            // 标题
+            HStack {
+                Text("时间记录图")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                
+                Spacer()
+                
+                Text(formatDate(date))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
+            
+            // GitHub风格热力图网格
+            LazyVGrid(columns: Array(repeating: GridItem(.fixed(blockSize), spacing: blockSpacing), count: blocksPerRow), spacing: blockSpacing) {
+                ForEach(0..<24, id: \.self) { hour in
+                    TimeBlockCell(
+                        hour: hour,
+                        timeBlock: getTimeBlockForHour(hour),
+                        size: blockSize
+                    )
+                }
+            }
+            
+            // 时间轴标签
+            HStack {
+                Text("0").font(.caption2).foregroundColor(.secondary)
+                Spacer()
+                Text("6").font(.caption2).foregroundColor(.secondary)
+                Spacer()
+                Text("12").font(.caption2).foregroundColor(.secondary)
+                Spacer()
+                Text("18").font(.caption2).foregroundColor(.secondary)
+                Spacer()
+                Text("23").font(.caption2).foregroundColor(.secondary)
+            }
+            .padding(.horizontal, blockSize / 2)
+            
+            // GitHub风格图例
+            HeatmapLegend()
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .cornerRadius(12)
+    }
+    
+    // GitHub记录图颜色系统
+    private func focusIntensityColor(_ intensity: Double) -> Color {
+        switch intensity {
+        case 0.8...1.0:
+            return Color(hex: "#196127") // GitHub深绿色
+        case 0.6..<0.8:
+            return Color(hex: "#239a3b") // GitHub中绿色
+        case 0.4..<0.6:
+            return Color(hex: "#7bc96f") // GitHub浅绿色
+        case 0.2..<0.4:
+            return Color(hex: "#c6e48b") // GitHub很浅绿色
+        default:
+            return Color(hex: "#ebedf0") // GitHub灰色
         }
     }
 }
 ```
 
-##### AIInsightCard
+##### TimeBlockTaggingSheet - 时间标记表单
 ```swift
-struct AIInsightCard: View {
-    let insight: AIInsight
+struct TimeBlockTaggingSheet: View {
+    let timeBlock: TimeBlock
+    let timeBlockManager: TimeBlockManager
+    let onComplete: () -> Void
+    
+    @State private var activity = ""
+    @State private var selectedCategory = "工作"
+    @State private var notes = ""
+    @State private var isBeautifulMoment = false
+    
+    private let categories = ["工作", "学习", "娱乐", "社交", "运动", "阅读", "其他"]
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: iconForInsightType(insight.type))
-                    .foregroundColor(colorForInsightType(insight.type))
-                Text(insight.title)
-                    .font(.headline)
-                Spacer()
-                ConfidenceBadge(confidence: insight.confidence)
-            }
-            
-            Text(insight.content)
-                .font(.body)
-                .foregroundColor(.secondary)
-            
-            if insight.actionable {
-                Button("采取行动") {
-                    // 处理可操作的洞察
+        NavigationView {
+            Form {
+                // 时间信息（就像git commit信息）
+                Section("提交信息") {
+                    HStack {
+                        Text("开始时间")
+                        Spacer()
+                        Text(formatTime(timeBlock.startTime))
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    HStack {
+                        Text("结束时间")
+                        Spacer()
+                        Text(formatTime(timeBlock.endTime))
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    HStack {
+                        Text("时长")
+                        Spacer()
+                        Text(formatDuration(timeBlock.duration))
+                            .foregroundColor(.secondary)
+                    }
                 }
-                .buttonStyle(.borderedProminent)
+                
+                // 活动标记（就像commit message）
+                Section("提交标记") {
+                    TextField("活动名称（commit message）", text: $activity)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    
+                    Picker("分类", selection: $selectedCategory) {
+                        ForEach(categories, id: \.self) { category in
+                            Text(category).tag(category)
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle())
+                }
+                
+                // 备注信息
+                Section("详细描述") {
+                    TextField("添加备注（可选）", text: $notes)
+                        .lineLimit(3)
+                }
+                
+                // 美好时刻标记
+                Section("特殊标记") {
+                    Toggle("标记为美好时刻 ✨", isOn: $isBeautifulMoment)
+                        .toggleStyle(SwitchToggleStyle(tint: .gold))
+                }
+                
+                // 删除标记选项
+                if timeBlock.isTagged {
+                    Section {
+                        Button("移除标记", role: .destructive) {
+                            timeBlockManager.removeTag(from: timeBlock)
+                            onComplete()
+                        }
+                    }
+                }
+            }
+            .navigationTitle("标记时间块")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarItems(
+                leading: Button("取消") { onComplete() },
+                trailing: Button("保存") { saveTag() }
+                    .disabled(activity.isEmpty)
+                    .font(.system(size: 17, weight: .semibold))
+            )
+        }
+        .onAppear { loadExistingData() }
+    }
+    
+    private func saveTag() {
+        timeBlockManager.tagTimeBlock(
+            timeBlock,
+            activity: activity,
+            category: selectedCategory,
+            notes: notes.isEmpty ? nil : notes
+        )
+        
+        // 如果标记为美好时刻，创建特殊标记
+        if isBeautifulMoment {
+            _ = timeBlockManager.createBeautifulMoment(
+                for: timeBlock,
+                title: activity,
+                description: notes
+            )
+        }
+        
+        onComplete()
+    }
+}
+```
+
+##### InsightsOverviewCard - 智能洞察卡片
+```swift
+struct OverviewCard: View {
+    let insights: TimeInsights
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("人生代码质量报告")
+                .font(.headline)
+                .fontWeight(.semibold)
+            
+            HStack(spacing: 20) {
+                OverviewItem(
+                    title: "总提交时间",
+                    value: insights.formattedTotalTime,
+                    icon: "clock.fill",
+                    color: .blue
+                )
+                
+                OverviewItem(
+                    title: "平均每天",
+                    value: insights.formattedAverageDaily,
+                    icon: "calendar",
+                    color: .green
+                )
+                
+                OverviewItem(
+                    title: "标记率",
+                    value: String(format: "%.0f%%", insights.taggedPercentage * 100),
+                    icon: "tag.fill",
+                    color: .orange
+                )
             }
         }
         .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
-        .shadow(radius: 2)
+        .background(Color(.systemGray6))
+        .cornerRadius(16)
     }
 }
 ```
 
-### 4. 小组件设计
+## 数据流设计
 
-#### 小组件类型
-- **小尺寸**：今日使用时间 + 主要应用图标 + 场景标签色彩环
-- **中尺寸**：使用时间分布 + 前3个应用 + AI洞察摘要
-- **大尺寸**：完整的今日统计 + 场景分布图 + 7天趋势 + 个性化建议
-
-#### Widget配置
-```swift
-struct TimeAnalysisWidget: Widget {
-    let kind: String = "TimeAnalysisWidget"
-    
-    var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: TimeAnalysisTimelineProvider()) { entry in
-            TimeAnalysisWidgetEntryView(entry: entry)
-        }
-        .configurationDisplayName("时间分析")
-        .description("查看你的时间使用分布和AI洞察")
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
-    }
-}
-
-struct TimeAnalysisEntry: TimelineEntry {
-    let date: Date
-    let totalUsageTime: TimeInterval
-    let topApps: [AppUsageData]
-    let sceneDistribution: [SceneTagData]
-    let aiInsight: AIInsight?
-    let weeklyTrend: [DailyUsageData]
-}
-```
-
-## 后台任务设计
-
-### 后台任务架构
-
-```mermaid
-sequenceDiagram
-    participant App as 前台应用
-    participant BG as 后台任务
-    participant System as iOS系统
-    participant BGScheduler as BGTaskScheduler
-    
-    App->>System: 应用进入后台
-    System->>BG: 启动UIBackgroundTask
-    BG->>BGScheduler: 调度BGProcessingTask
-    
-    Note over BG: 后台任务运行(最多30秒-10分钟)
-    
-    BG->>BG: 监测应用状态变化
-    BG->>System: 任务即将到期
-    System->>BG: 结束后台任务
-    
-    Note over BGScheduler: 系统调度后台处理(15分钟后)
-    
-    BGScheduler->>BG: 执行BGProcessingTask
-    BG->>BG: 检查长时间专注会话
-    BG->>BGScheduler: 调度下一次处理
-    BG->>System: 任务完成
-    
-    App->>System: 应用重新进入前台
-    System->>App: 检查后台期间的数据
-    App->>App: 处理检测到的专注会话
-```
-
-### 后台任务类型
-
-#### 1. 短期后台任务 (UIBackgroundTask)
-- **用途**：应用进入后台时维持监测功能
-- **时长**：30秒到10分钟（系统决定）
-- **功能**：
-  - 监听应用状态变化
-  - 记录应用进入后台的时间
-  - 调度长期后台处理任务
-
-#### 2. 后台处理任务 (BGProcessingTask)
-- **用途**：定期检查和处理专注数据
-- **调度**：每15分钟尝试执行一次
-- **功能**：
-  - 检查长时间的专注会话
-  - 清理过期的临时数据
-  - 预处理统计数据
-
-### 后台权限配置
-
-#### Info.plist 配置
-```xml
-<key>UIBackgroundModes</key>
-<array>
-    <string>processing</string>
-    <string>background-processing</string>
-</array>
-<key>BGTaskSchedulerPermittedIdentifiers</key>
-<array>
-    <string>com.focustracker.app.processing</string>
-</array>
-```
-
-#### 权限请求策略
-1. **首次启动**：引导用户开启后台应用刷新
-2. **设置页面**：提供快速跳转到系统设置的选项
-3. **权限检查**：定期检查权限状态并提醒用户
-
-### 后台数据处理
-
-#### 专注会话检测流程
-```swift
-// 后台检测逻辑
-func handleAppBecomeActive() {
-    let now = Date()
-    
-    if let inactiveTime = lastAppInactiveTime {
-        let inactiveDuration = now.timeIntervalSince(inactiveTime)
-        
-        if inactiveDuration >= minimumFocusTime {
-            // 检测到潜在专注会话
-            onFocusSessionDetected?(inactiveTime, now)
-        }
-    }
-    
-    lastAppActiveTime = now
-}
-```
-
-#### 重复会话防止
-```swift
-func isDuplicateSession(startTime: Date, endTime: Date) -> Bool {
-    // 检查是否已存在相似时间段的会话
-    let buffer: TimeInterval = 5 * 60 // 5分钟缓冲
-    let existingSessions = fetchSessions(around: startTime, buffer: buffer)
-    return !existingSessions.isEmpty
-}
-```
-
-### 后台任务限制和对策
-
-#### iOS系统限制
-- **时间限制**：后台任务有严格的时间限制
-- **频率限制**：系统根据用户使用习惯调整后台任务频率
-- **电池优化**：低电量模式会限制后台任务
-
-#### 应对策略
-- **优雅降级**：后台任务失败时不影响前台功能
-- **数据补偿**：前台启动时检查并补充缺失的数据
-- **用户教育**：说明后台权限的重要性
-- **智能调度**：根据用户使用模式优化后台任务调度
-
-## AI分析引擎设计
-
-### AI分析流程
+### 人生项目数据流
 
 ```mermaid
 flowchart TD
-    A[收集使用数据] --> B[数据预处理]
-    B --> C[特征提取]
-    C --> D[模式识别]
-    D --> E[行为分析]
-    E --> F[洞察生成]
-    F --> G[建议推荐]
-    G --> H[个性化输出]
+    A[用户时间使用] --> B[时间块生成器]
+    B --> C[Core Data存储]
+    C --> D[热力图管理器]
+    C --> E[洞察管理器]
+    C --> F[标签管理器]
     
-    subgraph "机器学习模型"
-        I[时间序列分析]
-        J[聚类算法]
-        K[异常检测]
-        L[预测模型]
+    D --> G[GitHub风格热力图]
+    E --> H[智能分析报告]
+    F --> I[时间标签系统]
+    
+    G --> J[时间记录图界面]
+    H --> K[智能洞察界面]
+    I --> L[时间标记界面]
+    
+    subgraph "数据处理层"
+        M[模拟数据生成器]
+        N[趋势分析器]
+        O[建议生成器]
     end
     
-    D --> I
-    D --> J
-    E --> K
-    F --> L
-    
-    subgraph "洞察类型"
-        M[使用模式洞察]
-        N[效率分析]
-        O[习惯变化检测]
-        P[目标达成预测]
-    end
-    
-    F --> M
-    F --> N
-    F --> O
-    F --> P
+    B --> M
+    E --> N
+    E --> O
 ```
 
-### 核心AI功能
+### 核心数据流程
 
-#### 1. 行为模式识别
-```swift
-struct BehaviorPattern {
-    let type: PatternType
-    let strength: Float // 0.0 - 1.0
-    let timeRange: DateInterval
-    let description: String
-    let metadata: [String: Any]
-}
+1. **时间记录**: 自动生成时间块，记录用户的时间使用
+2. **标签标记**: 用户为时间块添加有意义的标签
+3. **热力图生成**: 将时间数据转换为GitHub风格的可视化
+4. **智能分析**: 分析时间使用模式，生成个性化洞察
+5. **美好时刻**: 特殊时刻的标记和回顾功能
 
-enum PatternType {
-    case dailyPeak(hour: Int) // 每日使用高峰
-    case appSequence([String]) // 应用使用序列
-    case breakPattern(interval: TimeInterval) // 休息模式
-    case focusWindow(duration: TimeInterval) // 专注时段
-    case weekendDifference(ratio: Float) // 工作日vs周末差异
-}
-```
+### 数据隐私保护
 
-#### 2. 智能标签推荐
-```swift
-class SmartTagRecommender {
-    private let mlModel: MLModel
-    
-    func recommendTag(for app: String, at time: Date, context: UsageContext) -> SceneTag? {
-        let features = extractFeatures(app: app, time: time, context: context)
-        let prediction = try? mlModel.prediction(from: features)
-        return mapPredictionToTag(prediction)
-    }
-    
-    private func extractFeatures(app: String, time: Date, context: UsageContext) -> MLFeatureProvider {
-        // 提取特征：时间、应用类别、使用历史、上下文等
-    }
-}
-```
-
-#### 3. 个性化洞察生成
-```swift
-class InsightGenerator {
-    func generateInsights(from patterns: [BehaviorPattern], 
-                         usage: [AppUsageSession]) -> [AIInsight] {
-        var insights: [AIInsight] = []
-        
-        // 效率分析洞察
-        if let efficiencyInsight = analyzeEfficiency(patterns, usage) {
-            insights.append(efficiencyInsight)
-        }
-        
-        // 习惯变化洞察
-        if let habitChangeInsight = detectHabitChanges(patterns) {
-            insights.append(habitChangeInsight)
-        }
-        
-        // 优化建议洞察
-        if let optimizationInsight = generateOptimizationSuggestions(usage) {
-            insights.append(optimizationInsight)
-        }
-        
-        return insights
-    }
-}
-```
-
-### 场景标签智能分类
-
-#### 标签分类算法
-```mermaid
-flowchart TD
-    A[应用使用事件] --> B[提取特征]
-    B --> C{有历史标签?}
-    C -->|是| D[使用历史偏好]
-    C -->|否| E[应用类别映射]
-    D --> F[时间上下文分析]
-    E --> F
-    F --> G[智能推荐标签]
-    G --> H[用户确认/修改]
-    H --> I[更新学习模型]
-    I --> J[保存标签关联]
-```
-
-#### 特征提取
-- **时间特征**：使用时间段、工作日/周末、节假日
-- **应用特征**：应用类别、使用频率、使用时长
-- **行为特征**：切换频率、使用模式、中断次数
-- **上下文特征**：位置信息（如果授权）、日历事件
-
-### 数据流设计
-
-1. **数据收集**：DeviceActivity Framework监控应用使用
-2. **实时处理**：后台任务处理使用数据并提取特征
-3. **AI分析**：Core ML模型分析行为模式和生成洞察
-4. **标签管理**：智能推荐和用户自定义标签系统
-5. **数据存储**：Core Data本地存储，保护用户隐私
-6. **可视化展示**：SwiftUI + Swift Charts呈现分析结果
+- **本地存储**: 所有数据存储在设备本地，不上传云端
+- **最小化收集**: 只收集时间管理必需的数据
+- **用户控制**: 用户可随时查看、修改或删除数据
+- **透明度**: 清晰说明数据的收集和使用方式
 
 ## 错误处理
 

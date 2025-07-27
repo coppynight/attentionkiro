@@ -2,37 +2,48 @@
 
 ## Root Directory
 ```
-FocusTracker/                 # Main application target
-FocusTracker.xcodeproj/       # Xcode project configuration
-.kiro/                        # Kiro AI assistant configuration
+Timelog/                      # Main application target
+Timelog.xcodeproj/           # Xcode project configuration
+.kiro/                       # Kiro AI assistant configuration
 ```
 
 ## Application Structure
 ```
-FocusTracker/
-├── FocusTrackerApp.swift     # App entry point and Core Data setup
-├── ContentView.swift         # Main UI view
-├── Info.plist               # App configuration and metadata
+Timelog/
+├── TimelogApp.swift         # App entry point and Core Data setup
+├── ContentView.swift        # Main UI view with tab navigation
+├── Info.plist              # App configuration and metadata
 ├── Assets.xcassets/         # App icons, colors, and image assets
 ├── Models/                  # Core Data model classes
-├── FocusDataModel.xcdatamodeld/  # Core Data model definition
-└── Preview Content/         # SwiftUI preview assets
+├── Views/                   # SwiftUI view components
+│   ├── Heatmap/            # Heatmap visualization views
+│   ├── Tagging/            # Time block tagging views
+│   ├── Insights/           # Smart analysis views
+│   └── Settings/           # Settings and configuration views
+├── Services/               # Business logic and data services
+├── TimelogDataModel.xcdatamodeld/  # Core Data model definition
+└── Preview Content/        # SwiftUI preview assets
 ```
 
 ## Models Directory
-- **FocusSession+CoreDataClass.swift** - Custom business logic for FocusSession entity
-- **FocusSession+CoreDataProperties.swift** - Generated Core Data properties
+- **TimeBlock+CoreDataClass.swift** - Custom business logic for TimeBlock entity
+- **TimeBlock+CoreDataProperties.swift** - Generated Core Data properties
 - **UserSettings+CoreDataClass.swift** - Custom business logic for UserSettings entity  
 - **UserSettings+CoreDataProperties.swift** - Generated Core Data properties
 
+## Views Organization
+- **Time/**: Combined time management interface (heatmap + tagging)
+- **Insights/**: Smart analysis and summary views
+- **Settings/**: App configuration and preferences
+
 ## File Organization Principles
-- **Separation of Concerns**: UI, models, and data persistence are clearly separated
+- **Feature-based Structure**: Views organized by main app features
 - **Core Data Pattern**: Each entity has separate files for custom logic and generated properties
-- **SwiftUI Structure**: Views, app entry point, and preview content are organized logically
+- **SwiftUI Structure**: Clean separation of UI components and business logic
 - **Asset Management**: All visual assets centralized in Assets.xcassets
 
 ## Naming Conventions
-- Swift files use PascalCase (e.g., `ContentView.swift`)
+- Swift files use PascalCase (e.g., `HeatmapView.swift`)
 - Core Data extensions follow pattern: `EntityName+CoreDataClass.swift` and `EntityName+CoreDataProperties.swift`
 - Folders use PascalCase for consistency
 - Asset catalogs use descriptive names (AccentColor, AppIcon)
@@ -41,4 +52,4 @@ FocusTracker/
 - **Single Target**: Simple iOS app structure without multiple targets or frameworks
 - **Core Data Integration**: Centralized persistence controller with environment injection
 - **SwiftUI First**: Modern declarative UI approach throughout
-- **Preview Support**: All views should include preview providers for development
+- **Feature Modularity**: Clear separation of main app features

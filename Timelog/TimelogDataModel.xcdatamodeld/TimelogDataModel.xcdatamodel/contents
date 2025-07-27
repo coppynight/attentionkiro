@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="23F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="TimeBlock" representedClassName="TimeBlock" syncable="YES" codeGenerationType="category">
+        <attribute name="category" optional="YES" attributeType="String"/>
+        <attribute name="duration" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="endTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isTagged" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="startTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="taggedActivity" optional="YES" attributeType="String"/>
+        <relationship name="commits" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TimeCommit" inverseName="timeBlock" inverseEntity="TimeCommit"/>
+        <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TimeTag" inverseName="timeBlocks" inverseEntity="TimeTag"/>
+    </entity>
+    <entity name="TimeCommit" representedClassName="TimeCommit" syncable="YES">
+        <attribute name="commitHash" optional="YES" attributeType="String"/>
+        <attribute name="commitMessage" optional="YES" attributeType="String"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="focusIntensity" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="interruptionCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="isBeautifulMoment" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="qualityScore" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="timeBlock" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TimeBlock" inverseName="commits" inverseEntity="TimeBlock"/>
+    </entity>
+    <entity name="TimeTag" representedClassName="TimeTag" syncable="YES">
+        <attribute name="color" optional="YES" attributeType="String"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isDefault" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="tagDescription" optional="YES" attributeType="String"/>
+        <attribute name="usageCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="timeBlocks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TimeBlock" inverseName="tags" inverseEntity="TimeBlock"/>
+    </entity>
+    <entity name="UserSettings" representedClassName="UserSettings" syncable="YES" codeGenerationType="category">
+        <attribute name="autoTaggingEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="dailyGoalHours" optional="YES" attributeType="Double" defaultValueString="8.0" usesScalarValueType="YES"/>
+        <attribute name="enableBeautifulMoments" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="heatmapColorScheme" optional="YES" attributeType="String"/>
+        <attribute name="timeBlockGranularity" optional="YES" attributeType="Double" defaultValueString="1200.0" usesScalarValueType="YES"/>
+        <attribute name="weeklyReviewEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="workingHoursEnd" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="workingHoursStart" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
+</model>

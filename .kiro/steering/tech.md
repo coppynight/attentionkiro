@@ -12,27 +12,27 @@
 - **Environment Objects** - SwiftUI's dependency injection for managed object context
 
 ## Data Layer
-- **Core Data Model**: `FocusDataModel.xcdatamodeld`
-- **Entities**: FocusSession, UserSettings
+- **Core Data Model**: `TimelogDataModel.xcdatamodeld`
+- **Entities**: TimeBlock, UserSettings
 - **Generated Classes**: Separate +CoreDataClass and +CoreDataProperties files
 - **Persistence Controller**: Singleton pattern with preview support
 
 ## Build System
 - **Xcode Project** - Standard iOS project structure
-- **Target**: iOS application
-- **Bundle Identifier**: Configured via project settings
+- **Target**: iOS application (Timelog)
+- **Bundle Identifier**: com.timelog.app
 - **Deployment**: iOS with iPhone/iPad support
 
 ## Common Commands
 ```bash
 # Build the project
-xcodebuild -project FocusTracker.xcodeproj -scheme FocusTracker build
+xcodebuild -project Timelog.xcodeproj -scheme Timelog build
 
 # Run on simulator
-xcodebuild -project FocusTracker.xcodeproj -scheme FocusTracker -destination 'platform=iOS Simulator,name=iPhone 15' build
+xcodebuild -project Timelog.xcodeproj -scheme Timelog -destination 'platform=iOS Simulator,name=iPhone 15' build
 
 # Clean build folder
-xcodebuild -project FocusTracker.xcodeproj clean
+xcodebuild -project Timelog.xcodeproj clean
 ```
 
 ## Development Conventions

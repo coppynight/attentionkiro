@@ -1,90 +1,125 @@
-# FocusTracker 专注追踪应用
+# Timelog - iOS App
 
-FocusTracker是一款iOS应用，用于追踪和监控用户的专注时间段。应用通过记录用户专注工作的时间，帮助用户建立更好的专注习惯。
+A modern iOS application using a **workspace + SPM package** architecture for clean separation between app shell and feature code.
 
-## 项目结构
+## AI Assistant Rules Files
+
+This template includes **opinionated rules files** for popular AI coding assistants. These files establish coding standards, architectural patterns, and best practices for modern iOS development using the latest APIs and Swift features.
+
+### Included Rules Files
+- **Claude Code**: `CLAUDE.md` - Claude Code rules
+- **Cursor**: `.cursor/*.mdc` - Cursor-specific rules
+- **GitHub Copilot**: `.github/copilot-instructions.md` - GitHub Copilot rules
+
+### Customization Options
+These rules files are **starting points** - feel free to:
+- ✅ **Edit them** to match your team's coding standards
+- ✅ **Delete them** if you prefer different approaches
+- ✅ **Add your own** rules for other AI tools
+- ✅ **Update them** as new iOS APIs become available
+
+### What Makes These Rules Opinionated
+- **No ViewModels**: Embraces pure SwiftUI state management patterns
+- **Swift 6+ Concurrency**: Enforces modern async/await over legacy patterns
+- **Latest APIs**: Recommends iOS 18+ features with optional iOS 26 guidelines
+- **Testing First**: Promotes Swift Testing framework over XCTest
+- **Performance Focus**: Emphasizes @Observable over @Published for better performance
+
+**Note for AI assistants**: You MUST read the relevant rules files before making changes to ensure consistency with project standards.
+
+## Project Architecture
 
 ```
-FocusTracker/                 # 主应用目标
-├── FocusTrackerApp.swift     # 应用入口点和Core Data设置
-├── ContentView.swift         # 主UI视图
-├── Views/                    # 视图文件夹
-│   ├── HomeView.swift        # 首页视图
-│   ├── StatisticsView.swift  # 统计视图
-│   └── SettingsView.swift    # 设置视图
-├── Services/                 # 服务文件夹
-│   ├── FocusManager.swift    # 专注管理器
-│   └── UsageMonitor.swift    # 使用监控器
-├── Models/                   # 模型文件夹
-│   ├── FocusSession+CoreDataClass.swift      # 专注会话实体
-│   ├── FocusSession+CoreDataProperties.swift # 专注会话属性
-│   ├── UserSettings+CoreDataClass.swift      # 用户设置实体
-│   └── UserSettings+CoreDataProperties.swift # 用户设置属性
-└── FocusDataModel.xcdatamodeld/  # Core Data模型定义
-
-FocusTrackerTests/           # 单元测试目标
-├── Services/                # 服务测试
-│   └── FocusManagerTests.swift
-└── TestHelpers/            # 测试辅助工具
-    ├── TestPersistenceController.swift
-    ├── TestUsageMonitor.swift
-    └── TestFocusManager.swift
-
-FocusTrackerUITests/         # UI测试目标
-└── FocusTrackerUITests.swift
+Timelog/
+├── Timelog.xcworkspace/              # Open this file in Xcode
+├── Timelog.xcodeproj/                # App shell project
+├── Timelog/                          # App target (minimal)
+│   ├── Assets.xcassets/                # App-level assets (icons, colors)
+│   ├── TimelogApp.swift              # App entry point
+│   └── Timelog.xctestplan            # Test configuration
+├── TimelogPackage/                   # 🚀 Primary development area
+│   ├── Package.swift                   # Package configuration
+│   ├── Sources/TimelogFeature/       # Your feature code
+│   └── Tests/TimelogFeatureTests/    # Unit tests
+└── TimelogUITests/                   # UI automation tests
 ```
 
-## 核心功能
+## Key Architecture Points
 
-- 追踪专注会话的开始和结束时间
-- 显示每日专注时间总计
-- 根据最小专注时长（30分钟）验证会话
-- 存储用户偏好和设置
-- 中文界面（专注追踪）
-- 7天专注趋势图表
-- 专注时段历史列表
-- 个人最佳记录展示
-- 可配置的午休时间排除
-- 灵活的睡眠时间设置
-- 跨时区时间调整
+### Workspace + SPM Structure
+- **App Shell**: `Timelog/` contains minimal app lifecycle code
+- **Feature Code**: `TimelogPackage/Sources/TimelogFeature/` is where most development happens
+- **Separation**: Business logic lives in the SPM package, app target just imports and displays it
 
-## 技术栈
+### Buildable Folders (Xcode 16)
+- Files added to the filesystem automatically appear in Xcode
+- No need to manually add files to project targets
+- Reduces project file conflicts in teams
 
-- **SwiftUI** - 现代声明式UI框架
-- **Swift** - 主要编程语言
-- **Core Data** - 数据持久化和管理
-- **Foundation** - 核心系统框架
+## Development Notes
 
-## 架构模式
+### Code Organization
+Most development happens in `TimelogPackage/Sources/TimelogFeature/` - organize your code as you prefer.
 
-- **MVVM** - 模型-视图-视图模型模式与SwiftUI结合
-- **Core Data Stack** - 集中式持久化控制器模式
-- **Environment Objects** - SwiftUI的依赖注入，用于管理对象上下文
+### Public API Requirements
+Types exposed to the app target need `public` access:
+```swift
+public struct NewView: View {
+    public init() {}
+    
+    public var body: some View {
+        // Your view code
+    }
+}
+```
 
-## 测试
+### Adding Dependencies
+Edit `TimelogPackage/Package.swift` to add SPM dependencies:
+```swift
+dependencies: [
+    .package(url: "https://github.com/example/SomePackage", from: "1.0.0")
+],
+targets: [
+    .target(
+        name: "TimelogFeature",
+        dependencies: ["SomePackage"]
+    ),
+]
+```
 
-项目包含两种类型的测试：
+### Test Structure
+- **Unit Tests**: `TimelogPackage/Tests/TimelogFeatureTests/` (Swift Testing framework)
+- **UI Tests**: `TimelogUITests/` (XCUITest framework)
+- **Test Plan**: `Timelog.xctestplan` coordinates all tests
 
-1. **单元测试** (FocusTrackerTests)
-   - 测试FocusManager的核心功能
-   - 测试专注会话的验证逻辑
-   - 测试统计数据的计算
+## Configuration
 
-2. **UI测试** (FocusTrackerUITests)
-   - 测试标签页导航
-   - 测试统计视图的显示
-   - 测试设置视图的交互
+### XCConfig Build Settings
+Build settings are managed through **XCConfig files** in `Config/`:
+- `Config/Shared.xcconfig` - Common settings (bundle ID, versions, deployment target)
+- `Config/Debug.xcconfig` - Debug-specific settings  
+- `Config/Release.xcconfig` - Release-specific settings
+- `Config/Tests.xcconfig` - Test-specific settings
 
-要运行测试，请在Xcode中选择相应的测试目标并使用Command+U快捷键。
+### Entitlements Management
+App capabilities are managed through a **declarative entitlements file**:
+- `Config/Timelog.entitlements` - All app entitlements and capabilities
+- AI agents can safely edit this XML file to add HealthKit, CloudKit, Push Notifications, etc.
+- No need to modify complex Xcode project files
 
-## 构建和运行
+### Asset Management
+- **App-Level Assets**: `Timelog/Assets.xcassets/` (app icon, accent color)
+- **Feature Assets**: Add `Resources/` folder to SPM package if needed
 
-1. 使用Xcode打开FocusTracker.xcodeproj
-2. 选择一个模拟器或连接的iOS设备
-3. 按Command+R运行应用
+### SPM Package Resources
+To include assets in your feature package:
+```swift
+.target(
+    name: "TimelogFeature",
+    dependencies: [],
+    resources: [.process("Resources")]
+)
+```
 
-## 注意事项
-
-- 应用需要iOS 15.0或更高版本
-- 图表功能在iOS 16.0及以上版本使用Swift Charts，在较低版本使用自定义实现
-- 测试代码已从主应用代码中分离，移至测试目标
+### Generated with XcodeBuildMCP
+This project was scaffolded using [XcodeBuildMCP](https://github.com/cameroncooke/XcodeBuildMCP), which provides tools for AI-assisted iOS development workflows.
