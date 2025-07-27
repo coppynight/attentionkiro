@@ -1,0 +1,6 @@
+{
+    "kiroAgent.trustedCommands": [
+        "xcodebuild *",
+        "find *"
+    ]
+}

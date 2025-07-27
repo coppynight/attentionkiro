@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Task Completion Checker",
+  "description": "Monitors task completion reports and automatically initiates new sessions for subsequent tasks when a task is successfully completed",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "*_COMPLETION_REPORT.md"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A task completion report has been updated. Please check the completion status of the task. If the task was successful and there are more tasks planned in the sequence, please: 1. Start a new session 2. Execute the next task in the new session. Analyze the completion report to determine success status and identify any next steps or subsequent tasks that need to be executed."
+  }
+}

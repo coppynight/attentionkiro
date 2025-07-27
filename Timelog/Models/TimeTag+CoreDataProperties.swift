@@ -10,10 +10,13 @@ extension TimeTag {
     @NSManaged public var id: UUID?
     @NSManaged public var name: String?
     @NSManaged public var tagDescription: String?
+    @NSManaged public var category: String?
     @NSManaged public var color: String?
+    @NSManaged public var icon: String?
     @NSManaged public var isDefault: Bool
     @NSManaged public var usageCount: Int32
     @NSManaged public var createdAt: Date?
+    @NSManaged public var lastUsedAt: Date?
     @NSManaged public var timeBlocks: NSSet?
 
 }
